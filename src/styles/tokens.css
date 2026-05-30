@@ -1,0 +1,44 @@
+:root {
+  /* Dark mode — default */
+  --bg:           #020e22;
+  --bg-brand:     #05204A;
+  --bg-surface:   #0a1f3d;
+  --bg-elevated:  #0f2a50;
+
+  --accent:       #2EE6FF;
+  --accent-mid:   #1CC8E5;
+  --accent-glow:  #0FA3C2;
+  --accent-outer: #0A7FA0;
+
+  --text:         #FFFFFF;
+  --text-muted:   #7ba3c8;
+
+  --neon-text:    0 0 8px #2EE6FF, 0 0 20px #1CC8E5, 0 0 40px #0FA3C2, 0 0 80px #0A7FA0, 0 0 120px #0A7FA040;
+  --neon-border:  0 0 4px #2EE6FF, 0 0 12px #1CC8E5, 0 0 25px #0FA3C2, inset 0 0 6px #0FA3C240;
+  --neon-subtle:  0 0 12px #1CC8E540, 0 0 30px #0FA3C220;
+
+  --radius-sm:    6px;
+  --radius-md:    12px;
+  --radius-lg:    20px;
+
+  --transition:   200ms ease;
+}
+
+[data-theme="light"] {
+  --bg:           #F8FAFC;
+  --bg-brand:     #EEF2F7;
+  --bg-surface:   #FFFFFF;
+  --bg-elevated:  #E2EAF4;
+
+  --accent:       #1CC8E5;
+  --accent-mid:   #0FA3C2;
+  --accent-glow:  #0A7FA0;
+  --accent-outer: #05204A;
+
+  --text:         #05204A;
+  --text-muted:   #4a6282;
+
+  --neon-text:    none;
+  --neon-border:  0 0 0 1.5px #1CC8E5;
+  --neon-subtle:  0 0 0 1px #1CC8E540;
+}
