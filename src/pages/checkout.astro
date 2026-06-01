@@ -1,0 +1,204 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Checkout">
+  <section class="checkout">
+    <h1 class="checkout-title">Checkout</h1>
+
+    <div class="checkout-layout">
+      <!-- ── Columna principal ── -->
+      <div class="checkout-main">
+        <!-- Dirección de envío -->
+        <div class="card">
+          <h2>Dirección de Envío</h2>
+          <div class="address-empty" id="address-empty">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            <p class="ae-title">No tienes direcciones guardadas</p>
+            <p class="ae-sub">Agrega una dirección de envío para continuar</p>
+            <a href="/cuenta/direcciones" class="btn-outline">+ Agregar Dirección</a>
+          </div>
+        </div>
+
+        <!-- Método de pago -->
+        <div class="card">
+          <h2>Método de Pago</h2>
+          <p class="card-sub">Selecciona el método de pago</p>
+          <div class="pay-list">
+            <label class="pay-option selected">
+              <input type="radio" name="pay" value="mercadopago" checked />
+              <div>
+                <span class="po-title">MercadoPago</span>
+                <span class="po-desc">Tarjeta de crédito/débito, transferencia o efectivo</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Resumen ── -->
+      <aside class="checkout-summary">
+        <div class="card">
+          <h2>Resumen del Pedido</h2>
+          <div id="summary-items"></div>
+          <div class="summary-divider"></div>
+          <div class="summary-row total">
+            <span>Subtotal</span>
+            <span id="summary-subtotal"></span>
+          </div>
+          <p class="summary-note">El costo de envío se coordina al despachar (Starken).</p>
+          <button class="btn-order" id="create-order" disabled>Crear Pedido</button>
+          <p class="order-hint" id="order-hint">Agrega una dirección para continuar.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .checkout { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+  .checkout-title { font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 24px; }
+
+  .checkout-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+  }
+  .checkout-main { display: flex; flex-direction: column; gap: 24px; }
+
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+    border-radius: var(--radius-md);
+    padding: 24px;
+  }
+  .card h2 { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
+  .card-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* Dirección vacía */
+  .address-empty {
+    border: 1.5px dashed color-mix(in srgb, var(--text) 15%, transparent);
+    border-radius: var(--radius-md);
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .ae-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 6px; }
+  .ae-sub { font-size: 0.85rem; }
+  .btn-outline {
+    margin-top: 12px;
+    padding: 11px 22px;
+    border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: var(--radius-md);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: background var(--transition);
+  }
+  .btn-outline:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+  /* Métodos de pago */
+  .pay-list { display: flex; flex-direction: column; gap: 12px; }
+  .pay-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1.5px solid color-mix(in srgb, var(--text) 12%, transparent);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  .pay-option:hover { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  .pay-option.selected { border-color: var(--accent); box-shadow: var(--neon-subtle); }
+  .pay-option input { accent-color: var(--accent); width: 18px; height: 18px; }
+  .pay-option div { display: flex; flex-direction: column; gap: 2px; }
+  .po-title { font-weight: 700; color: var(--text); font-size: 0.92rem; }
+  .po-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* Resumen */
+  .checkout-summary .card { position: sticky; top: calc(var(--header-height) + 16px); }
+  :global(.so-item) {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+  }
+  :global(.so-item:not(:last-child)) { border-bottom: 1px solid color-mix(in srgb, var(--text) 6%, transparent); }
+  :global(.so-name) { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+  :global(.so-meta) { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+  :global(.so-price) { font-size: 0.88rem; font-weight: 700; color: var(--text); white-space: nowrap; }
+
+  .summary-divider { height: 1px; background: color-mix(in srgb, var(--text) 10%, transparent); margin: 12px 0; }
+  .summary-row { display: flex; justify-content: space-between; }
+  .summary-row.total { font-size: 1.15rem; font-weight: 800; color: var(--text); }
+  .summary-row.total span:last-child { color: var(--accent); }
+  .summary-note { font-size: 0.78rem; color: var(--text-muted); margin: 12px 0; }
+
+  .btn-order {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: filter var(--transition);
+  }
+  .btn-order:hover:not(:disabled) { filter: brightness(1.08); }
+  .btn-order:disabled { background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed; }
+  .order-hint { font-size: 0.76rem; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+  @media (max-width: 860px) {
+    .checkout-layout { grid-template-columns: 1fr; }
+    .checkout-summary .card { position: static; }
+  }
+</style>
+
+<script>
+  import { cartStore, initCart, cartTotal, type CartItem } from '../stores/cart';
+
+  const fmt = (n: number) => `$ ${n.toLocaleString('es-CL')}`;
+  const itemsEl    = document.getElementById('summary-items')!;
+  const subtotalEl = document.getElementById('summary-subtotal')!;
+
+  function render() {
+    const items = cartStore.get();
+    itemsEl.innerHTML = items
+      .map((i: CartItem) => `
+        <div class="so-item">
+          <div>
+            <div class="so-name">${i.nombre}</div>
+            <div class="so-meta">${[i.sku, `x${i.cantidad}`].filter(Boolean).join(' · ')}</div>
+          </div>
+          <span class="so-price">${fmt(i.precio * i.cantidad)}</span>
+        </div>`)
+      .join('');
+    subtotalEl.textContent = fmt(cartTotal());
+  }
+
+  initCart();
+  render();
+  cartStore.subscribe(() => render());
+
+  // Selección visual del método de pago
+  document.querySelectorAll<HTMLElement>('.pay-option').forEach((opt) => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.pay-option').forEach((o) => o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+
+  // "Crear Pedido" se habilita cuando haya una dirección elegida (pendiente: requiere login).
+  // Por ahora queda deshabilitado mostrando el motivo, igual que el diseño de referencia.
+</script>
