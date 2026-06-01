@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Iniciar sesión">
+  <section class="login">
+    <div class="login-card">
+      <a href="/" class="logo"><span class="logo-accent">jocoso</span>.cl</a>
+      <h1>Iniciar sesión</h1>
+      <p class="sub">Entra con tu cuenta de Google para comprar, guardar favoritos y ver tus pedidos.</p>
+
+      <!-- Botón de Google (lo renderiza GIS) -->
+      <div id="google-btn" class="google-btn"></div>
+
+      <p class="error" id="login-error" hidden></p>
+
+      <p class="terms">Al continuar aceptas nuestros términos y política de privacidad.</p>
+    </div>
+  </section>
+</Base>
+
+<!-- Google Identity Services -->
+<script is:inline src="https://accounts.google.com/gsi/client" async></script>
+
+<style>
+  .login {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+  .logo { font-size: 1.4rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+  .logo-accent { color: var(--accent); text-shadow: var(--neon-text); }
+  .login-card h1 { font-size: 1.4rem; font-weight: 800; color: var(--text); }
+  .sub { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  .google-btn { margin-top: 12px; min-height: 44px; display: flex; justify-content: center; }
+
+  .error {
+    font-size: 0.85rem;
+    color: var(--danger);
+    background: var(--danger-bg);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+  .terms { font-size: 0.72rem; color: var(--text-muted); margin-top: 8px; }
+</style>
+
+<script>
+  import { loginWithGoogle } from '../lib/api';
+  import { setAuth, initAuth, isAuthenticated } from '../stores/auth';
+
+  // Si ya hay sesión, no tiene sentido el login → manda a destino o home
+  initAuth();
+  const params = new URLSearchParams(location.search);
+  const redirectTo = params.get('redirect') || '/';
+  if (isAuthenticated()) location.replace(redirectTo);
+
+  const errorEl = document.getElementById('login-error');
+  function showError(msg: string) {
+    if (errorEl) { errorEl.textContent = msg; errorEl.hidden = false; }
+  }
+
+  // Callback cuando Google entrega el ID token
+  async function onGoogleCredential(response: { credential: string }) {
+    try {
+      const auth = await loginWithGoogle(response.credential);
+      setAuth(auth.user, auth.accessToken, auth.refreshToken);
+      location.replace(redirectTo);
+    } catch (err) {
+      showError(err instanceof Error ? err.message : 'No se pudo iniciar sesión');
+    }
+  }
+
+  // Inicializa GIS cuando el script esté cargado
+  function initGoogle() {
+    const g = (window as any).google;
+    const clientId = import.meta.env.PUBLIC_GOOGLE_CLIENT_ID;
+    if (!g?.accounts?.id) { setTimeout(initGoogle, 150); return; }
+    if (!clientId) { showError('Falta configurar PUBLIC_GOOGLE_CLIENT_ID'); return; }
+
+    g.accounts.id.initialize({ client_id: clientId, callback: onGoogleCredential });
+    g.accounts.id.renderButton(document.getElementById('google-btn'), {
+      theme: 'filled_black',
+      size: 'large',
+      shape: 'pill',
+      text: 'continue_with',
+      logo_alignment: 'left',
+    });
+  }
+  initGoogle();
+</script>

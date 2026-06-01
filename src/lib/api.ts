@@ -120,3 +120,39 @@ export function totalStock(variants: ProductVariant[]): number {
 export function isMainTag(tag: ProductTag): boolean {
   return !tag.name.startsWith('#');
 }
+
+export interface AuthResponse {
+  user: { id: string; email: string; name: string | null; phone: string | null; role: string };
+  accessToken: string;
+  refreshToken: string;
+}
+
+// Edita el perfil del usuario autenticado (PATCH /auth/me, 204). Requiere accessToken.
+export async function updateProfile(
+  token: string,
+  data: { name?: string | null; phone?: string | null },
+): Promise<void> {
+  const res = await fetch(`${BASE}/auth/me`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const msg = await res.json().catch(() => null);
+    throw new Error(msg?.message ?? 'No se pudo actualizar el perfil');
+  }
+}
+
+// Login con Google: manda el ID token de GIS al backend, que lo verifica y devuelve la sesión
+export async function loginWithGoogle(idToken: string): Promise<AuthResponse> {
+  const res = await fetch(`${BASE}/auth/google`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+  });
+  if (!res.ok) {
+    const msg = await res.json().catch(() => null);
+    throw new Error(msg?.message ?? 'No se pudo iniciar sesión con Google');
+  }
+  return res.json();
+}

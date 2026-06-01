@@ -1,0 +1,13 @@
+---
+// Guard de ruta: redirige a /login si no hay sesión. Úsalo en páginas protegidas.
+---
+
+<script>
+  import { initAuth, isAuthenticated } from '../../stores/auth';
+
+  initAuth();
+  if (!isAuthenticated()) {
+    const redirect = encodeURIComponent(location.pathname + location.search);
+    location.replace(`/login?redirect=${redirect}`);
+  }
+</script>

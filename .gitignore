@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# memoria/config de trabajo interna (no es parte del proyecto)
+CLAUDE.toon
