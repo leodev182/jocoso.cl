@@ -1,0 +1,85 @@
+---
+import type { Product } from '../../lib/api';
+import ProductGrid from './ProductGrid.astro';
+
+interface Props {
+  title: string;
+  viewAllHref?: string;
+  products: Product[];
+  alt?: boolean;
+  minimal?: boolean;
+}
+
+const { title, viewAllHref, products, alt = false, minimal = false } = Astro.props;
+---
+
+{products.length > 0 && (
+  <section class={`product-section ${alt ? 'alt' : ''}`}>
+    <div class="section-inner">
+      <div class="section-header">
+        <h2 class="section-title">{title}</h2>
+        {viewAllHref && (
+          <a href={viewAllHref} class="view-all">
+            Ver todos
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        )}
+      </div>
+
+      <ProductGrid products={products} minimal={minimal} />
+    </div>
+  </section>
+)}
+
+<style>
+  .product-section {
+    background: var(--bg);
+    padding: 48px 0;
+  }
+  .product-section.alt {
+    background: var(--bg-surface);
+  }
+
+  .section-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .view-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    transition: gap var(--transition);
+  }
+  .view-all:hover { gap: 10px; }
+
+  @media (max-width: 480px) {
+    .section-title { font-size: 1.15rem; }
+    .product-section { padding: 32px 0; }
+    .section-inner { padding: 0 16px; }
+  }
+</style>

@@ -1,4 +1,7 @@
 ---
+import Navbar from '../components/layout/Navbar.astro';
+import Footer from '../components/layout/Footer.astro';
+
 interface Props {
   title: string;
   description?: string;
@@ -23,10 +26,17 @@ const { title, description = 'Equipos gamers y periféricos al mejor precio — 
     </script>
   </head>
   <body>
-    <slot />
+    <Navbar />
+    <main class="page">
+      <slot />
+    </main>
+    <Footer />
   </body>
 </html>
 
 <style is:global>
   @import '../styles/global.css';
+
+  /* Compensa el header fijo (Navbar) para que el contenido no quede debajo */
+  .page { padding-top: var(--header-height); }
 </style>

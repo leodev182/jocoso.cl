@@ -1,42 +1,51 @@
 :root {
-  /* Dark mode — default */
-  --bg:           #020e22;
-  --bg-brand:     #05204A;
-  --bg-surface:   #0a1f3d;
-  --bg-elevated:  #0f2a50;
+  /* Dark mode — Electro-inspired: near-black + cyan neon */
+  --bg:           #0d0f14;
+  --bg-brand:     #111318;
+  --bg-surface:   #1a1d24;
+  --bg-elevated:  #22262f;
 
   --accent:       #2EE6FF;
   --accent-mid:   #1CC8E5;
   --accent-glow:  #0FA3C2;
   --accent-outer: #0A7FA0;
+  --on-accent:    #0d0f14;
 
   --text:         #FFFFFF;
-  --text-muted:   #7ba3c8;
+  --text-muted:   rgba(255, 255, 255, 0.55);
 
-  --neon-text:    0 0 8px #2EE6FF, 0 0 20px #1CC8E5, 0 0 40px #0FA3C2, 0 0 80px #0A7FA0, 0 0 120px #0A7FA040;
-  --neon-border:  0 0 4px #2EE6FF, 0 0 12px #1CC8E5, 0 0 25px #0FA3C2, inset 0 0 6px #0FA3C240;
+  --success:      #4ade80;
+  --success-bg:   rgba(74, 222, 128, 0.10);
+  --danger:       #f87171;
+  --danger-bg:    rgba(248, 113, 113, 0.10);
+
+  --neon-text:    0 0 8px #2EE6FF, 0 0 20px #1CC8E5, 0 0 40px #0FA3C2, 0 0 80px #0A7FA040;
+  --neon-border:  0 0 4px #2EE6FF, 0 0 12px #1CC8E5, 0 0 25px #0FA3C220;
   --neon-subtle:  0 0 12px #1CC8E540, 0 0 30px #0FA3C220;
 
   --radius-sm:    6px;
   --radius-md:    12px;
   --radius-lg:    20px;
-
   --transition:   200ms ease;
+
+  /* Altura del header fijo (barra principal 64px + barra de categorías 40px) */
+  --nav-height:    64px;
+  --header-height: 104px;
 }
 
 [data-theme="light"] {
-  --bg:           #F8FAFC;
-  --bg-brand:     #EEF2F7;
+  --bg:           #FFFFFF;
+  --bg-brand:     #F5F5F5;
   --bg-surface:   #FFFFFF;
-  --bg-elevated:  #E2EAF4;
+  --bg-elevated:  #EFEFEF;
 
   --accent:       #1CC8E5;
   --accent-mid:   #0FA3C2;
   --accent-glow:  #0A7FA0;
   --accent-outer: #05204A;
 
-  --text:         #05204A;
-  --text-muted:   #4a6282;
+  --text:         #111111;
+  --text-muted:   #666666;
 
   --neon-text:    none;
   --neon-border:  0 0 0 1.5px #1CC8E5;

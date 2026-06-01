@@ -1,0 +1,33 @@
+---
+import type { Product } from '../../lib/api';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  products: Product[];
+  // Ancho mínimo de columna; el grid acomoda cuántas caben (responsive sin media queries)
+  min?: string;
+  // Pasa el modo minimal a cada card (solo nombre/precio/botones)
+  minimal?: boolean;
+}
+
+const { products, min = '200px', minimal = false } = Astro.props;
+---
+
+<div class="product-grid" style={`--card-min: ${min}`}>
+  {products.map((product) => <ProductCard product={product} minimal={minimal} />)}
+</div>
+
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+  }
+</style>

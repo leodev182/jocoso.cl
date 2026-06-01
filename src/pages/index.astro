@@ -1,17 +1,45 @@
 ---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/hero/Hero.astro';
+import ProductSection from '../components/products/ProductSection.astro';
+import { getStorefrontProducts } from '../lib/api';
 
+const SECTION_LIMIT = 12;
+
+// Secciones: Destacados, Darkflash, y "ventilacion" mostrado como "Refrigeración"
+const [featured, darkflash, refrigeracion] = await Promise.all([
+  getStorefrontProducts({ featured: true, limit: SECTION_LIMIT }),
+  getStorefrontProducts({ tag: 'darkflash', limit: SECTION_LIMIT }),
+  getStorefrontProducts({ tag: 'ventilacion', limit: SECTION_LIMIT }),
+]);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base title="Inicio">
+  <Hero />
+
+  {featured.data.length > 0 && (
+    <ProductSection
+      title="Destacados"
+      viewAllHref="/productos?featured=true"
+      products={featured.data}
+      minimal={true}
+    />
+  )}
+
+  {darkflash.data.length > 0 && (
+    <ProductSection
+      title="Darkflash"
+      viewAllHref="/productos?tag=darkflash"
+      products={darkflash.data}
+      alt={true}
+    />
+  )}
+
+  {refrigeracion.data.length > 0 && (
+    <ProductSection
+      title="Refrigeración"
+      viewAllHref="/productos?tag=ventilacion"
+      products={refrigeracion.data}
+    />
+  )}
+</Base>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  variant?: 'accent' | 'success' | 'danger' | 'neutral';
+  // Color libre (ej: color del tag desde el backend). Tiene prioridad sobre variant.
+  color?: string;
+  class?: string;
+}
+
+const { variant = 'neutral', color, class: className } = Astro.props;
+---
+
+<span class:list={['badge', variant, className]} style={color ? `--badge-color: ${color}` : undefined}>
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .accent  { color: var(--accent);  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .success { color: var(--success); background: var(--success-bg); }
+  .danger  { color: var(--danger);  background: var(--danger-bg); }
+  .neutral { color: var(--text-muted); background: color-mix(in srgb, var(--text) 8%, transparent); }
+
+  /* Color libre desde prop (sobreescribe la variante) */
+  .badge[style*='--badge-color'] {
+    color: var(--badge-color);
+    background: color-mix(in srgb, var(--badge-color) 12%, transparent);
+  }
+</style>
