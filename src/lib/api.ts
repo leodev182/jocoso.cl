@@ -127,6 +127,62 @@ export interface AuthResponse {
   refreshToken: string;
 }
 
+export interface Address {
+  id: string;
+  alias: string;
+  fullName: string;
+  rut: string;
+  email: string;
+  phone: string;
+  region: string;
+  ciudad: string;
+  comuna: string;
+  calle: string;
+  numero: string;
+  depto: string | null;
+  referencia: string | null;
+  isDefault: boolean;
+}
+
+export type NewAddress = Omit<Address, 'id' | 'isDefault'>;
+
+const authHeaders = (token: string) => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${token}`,
+});
+
+async function parseError(res: Response, fallback: string): Promise<string> {
+  const body = await res.json().catch(() => null);
+  const msg = body?.message;
+  return Array.isArray(msg) ? msg.join(', ') : (msg ?? fallback);
+}
+
+export async function getAddresses(token: string): Promise<Address[]> {
+  const res = await fetch(`${BASE}/addresses`, { headers: authHeaders(token) });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudieron cargar las direcciones'));
+  return res.json();
+}
+
+export async function createAddress(token: string, data: NewAddress): Promise<Address> {
+  const res = await fetch(`${BASE}/addresses`, {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo crear la dirección'));
+  return res.json();
+}
+
+export async function setDefaultAddress(token: string, id: string): Promise<void> {
+  const res = await fetch(`${BASE}/addresses/${id}/default`, { method: 'PATCH', headers: authHeaders(token) });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo marcar como predeterminada'));
+}
+
+export async function deleteAddress(token: string, id: string): Promise<void> {
+  const res = await fetch(`${BASE}/addresses/${id}`, { method: 'DELETE', headers: authHeaders(token) });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo eliminar la dirección'));
+}
+
 // Edita el perfil del usuario autenticado (PATCH /auth/me, 204). Requiere accessToken.
 export async function updateProfile(
   token: string,
