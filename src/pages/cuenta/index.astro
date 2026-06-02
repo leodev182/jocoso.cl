@@ -208,7 +208,7 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
 </style>
 
 <script>
-  import { initAuth, userStore, tokenStore, updateUser, clearAuth } from '../../stores/auth';
+  import { initAuth, userStore, updateUser, clearAuth } from '../../stores/auth';
   import { updateProfile } from '../../lib/api';
 
   const ROLE_LABEL: Record<string, string> = {
@@ -257,9 +257,6 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
 
   editMode.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const token = tokenStore.get();
-    if (!token) { location.replace('/login?redirect=/cuenta'); return; }
-
     const name  = (($('i-name') as HTMLInputElement)).value.trim() || null;
     const phone = (($('i-phone') as HTMLInputElement)).value.trim() || null;
     const saveBtn = $('btn-save') as HTMLButtonElement;
@@ -267,7 +264,7 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     saveBtn.disabled = true;
     errorEl.hidden = true;
     try {
-      await updateProfile(token, { name, phone });
+      await updateProfile({ name, phone });
       updateUser({ name, phone });
       renderView();
       exitEdit();

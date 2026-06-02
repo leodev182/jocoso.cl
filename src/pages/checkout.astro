@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import RequireAuth from '../components/auth/RequireAuth.astro';
+import AddressForm from '../components/account/AddressForm.astro';
 ---
 
 <Base title="Checkout">
@@ -14,14 +15,10 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
         <!-- Dirección de envío -->
         <div class="card">
           <h2>Dirección de Envío</h2>
-          <div class="address-empty" id="address-empty">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
-            <p class="ae-title">No tienes direcciones guardadas</p>
-            <p class="ae-sub">Agrega una dirección de envío para continuar</p>
-            <a href="/cuenta/direcciones" class="btn-outline">+ Agregar Dirección</a>
-          </div>
+          <p class="loading" id="addr-loading">Cargando direcciones…</p>
+          <div id="address-list" class="address-list"></div>
+          <button type="button" class="btn-add-addr" id="btn-add-addr" hidden>+ Agregar dirección</button>
+          <AddressForm />
         </div>
 
         <!-- Método de pago -->
@@ -80,8 +77,51 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
   .card h2 { font-size: 1.15rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
   .card-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
 
-  /* Dirección vacía */
-  .address-empty {
+  .loading { color: var(--text-muted); font-size: 0.88rem; }
+
+  /* Lista de direcciones (inyectada por JS → estilos globales) */
+  .address-list { display: flex; flex-direction: column; gap: 12px; }
+  :global(.addr-opt) {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid color-mix(in srgb, var(--text) 12%, transparent);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  :global(.addr-opt:hover) { border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+  :global(.addr-opt.selected) { border-color: var(--accent); box-shadow: var(--neon-subtle); }
+  :global(.addr-opt input) { accent-color: var(--accent); width: 18px; height: 18px; margin-top: 2px; }
+  :global(.addr-opt .ao-alias) { font-weight: 700; color: var(--text); font-size: 0.92rem; }
+  :global(.addr-opt .ao-line) { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+  :global(.addr-add) {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .btn-add-addr {
+    margin-top: 14px;
+    padding: 10px 18px;
+    border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--accent);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+  .btn-add-addr:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .btn-add-addr[hidden] { display: none; }
+
+  /* Dirección vacía (inyectada por JS → global) */
+  :global(.address-empty) {
     border: 1.5px dashed color-mix(in srgb, var(--text) 15%, transparent);
     border-radius: var(--radius-md);
     padding: 40px 24px;
@@ -92,9 +132,9 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
     color: var(--text-muted);
     text-align: center;
   }
-  .ae-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 6px; }
-  .ae-sub { font-size: 0.85rem; }
-  .btn-outline {
+  :global(.ae-title) { font-size: 1rem; font-weight: 700; color: var(--text); margin-top: 6px; }
+  :global(.ae-sub) { font-size: 0.85rem; }
+  :global(.btn-outline) {
     margin-top: 12px;
     padding: 11px 22px;
     border: 1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
@@ -102,9 +142,7 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
     color: var(--accent);
     font-weight: 700;
     font-size: 0.88rem;
-    transition: background var(--transition);
   }
-  .btn-outline:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
   /* Métodos de pago */
   .pay-list { display: flex; flex-direction: column; gap: 12px; }
@@ -169,12 +207,23 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
 
 <script>
   import { cartStore, initCart, cartTotal, type CartItem } from '../stores/cart';
+  import { getAddresses, createOrder, initiatePayment, type Address } from '../lib/api';
 
   const fmt = (n: number) => `$ ${n.toLocaleString('es-CL')}`;
-  const itemsEl    = document.getElementById('summary-items')!;
-  const subtotalEl = document.getElementById('summary-subtotal')!;
+  const $ = (id: string) => document.getElementById(id)!;
+  const itemsEl    = $('summary-items');
+  const subtotalEl = $('summary-subtotal');
+  const addrList   = $('address-list');
+  const addBtn     = $('btn-add-addr') as HTMLButtonElement;
+  const addrForm   = document.querySelector<HTMLFormElement>('[data-address-form]')!;
+  const orderBtn   = $('create-order') as HTMLButtonElement;
+  const orderHint  = $('order-hint');
 
-  function render() {
+  let addresses: Address[] = [];
+  let selectedAddressId: string | null = null;
+
+  // ── Resumen del carrito ──
+  function renderSummary() {
     const items = cartStore.get();
     itemsEl.innerHTML = items
       .map((i: CartItem) => `
@@ -187,13 +236,89 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
         </div>`)
       .join('');
     subtotalEl.textContent = fmt(cartTotal());
+    refreshButton();
   }
 
-  initCart();
-  render();
-  cartStore.subscribe(() => render());
+  // ── Direcciones ──
+  function renderAddresses() {
+    $('addr-loading').hidden = true;
+    if (addresses.length === 0) {
+      addrList.innerHTML = `
+        <div class="address-empty">
+          <p class="ae-title">No tienes direcciones guardadas</p>
+          <p class="ae-sub">Agrega una dirección de envío para continuar</p>
+        </div>`;
+    } else {
+      addrList.innerHTML = addresses
+        .map((a) => `
+          <label class="addr-opt${a.id === selectedAddressId ? ' selected' : ''}" data-id="${a.id}">
+            <input type="radio" name="addr" value="${a.id}" ${a.id === selectedAddressId ? 'checked' : ''} />
+            <div>
+              <span class="ao-alias">${a.alias}${a.isDefault ? ' · Predeterminada' : ''}</span>
+              <div class="ao-line">${a.fullName} — ${a.calle} ${a.numero}${a.depto ? `, ${a.depto}` : ''}</div>
+              <div class="ao-line">${a.comuna}, ${a.ciudad}, ${a.region}</div>
+            </div>
+          </label>`)
+        .join('');
 
-  // Selección visual del método de pago
+      addrList.querySelectorAll<HTMLElement>('.addr-opt').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          selectedAddressId = opt.dataset.id!;
+          addrList.querySelectorAll('.addr-opt').forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          (opt.querySelector('input') as HTMLInputElement).checked = true;
+          refreshButton();
+        });
+      });
+    }
+    // El botón "Agregar" se ve si el formulario no está abierto
+    addBtn.hidden = !addrForm.hidden;
+  }
+
+  // Abrir formulario inline
+  addBtn.addEventListener('click', () => {
+    addrForm.hidden = false;
+    addBtn.hidden = true;
+  });
+  // Al crear una dirección: la agrego, la selecciono y refresco
+  document.addEventListener('address:created', (e) => {
+    const created = (e as CustomEvent).detail as Address;
+    addresses.push(created);
+    selectedAddressId = created.id;
+    renderAddresses();
+    refreshButton();
+  });
+  document.addEventListener('address:cancel', () => { addBtn.hidden = false; });
+
+  // ── Habilitar/deshabilitar "Crear Pedido" ──
+  function refreshButton() {
+    const hasItems = cartStore.get().length > 0;
+    const ok = hasItems && !!selectedAddressId;
+    orderBtn.disabled = !ok;
+    if (!hasItems) orderHint.textContent = 'Tu carrito está vacío.';
+    else if (!selectedAddressId) orderHint.textContent = 'Elige una dirección para continuar.';
+    else orderHint.textContent = '';
+  }
+
+  // ── Crear pedido → iniciar pago → redirigir a MercadoPago ──
+  orderBtn.addEventListener('click', async () => {
+    const items = cartStore.get().map((i) => ({ variantId: i.variantId, quantity: i.cantidad }));
+    if (!items.length || !selectedAddressId) return;
+
+    orderBtn.disabled = true;
+    orderBtn.textContent = 'Procesando…';
+    try {
+      const order = await createOrder({ items, addressId: selectedAddressId });
+      const payment = await initiatePayment(order.id);
+      location.href = payment.checkoutUrl; // a MercadoPago
+    } catch (err) {
+      orderHint.textContent = err instanceof Error ? err.message : 'Error al crear el pedido';
+      orderBtn.textContent = 'Crear Pedido';
+      orderBtn.disabled = false;
+    }
+  });
+
+  // Método de pago (visual, solo MercadoPago por ahora)
   document.querySelectorAll<HTMLElement>('.pay-option').forEach((opt) => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.pay-option').forEach((o) => o.classList.remove('selected'));
@@ -201,6 +326,20 @@ import RequireAuth from '../components/auth/RequireAuth.astro';
     });
   });
 
-  // "Crear Pedido" se habilita cuando haya una dirección elegida (pendiente: requiere login).
-  // Por ahora queda deshabilitado mostrando el motivo, igual que el diseño de referencia.
+  // ── Init ──
+  initCart();
+  renderSummary();
+  cartStore.subscribe(() => renderSummary());
+
+  async function loadAddresses() {
+    try {
+      addresses = await getAddresses();
+      selectedAddressId = addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? null;
+      renderAddresses();
+      refreshButton();
+    } catch {
+      $('addr-loading').textContent = 'No se pudieron cargar las direcciones.';
+    }
+  }
+  loadAddresses();
 </script>

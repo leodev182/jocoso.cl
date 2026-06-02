@@ -1,0 +1,135 @@
+---
+// Formulario reutilizable de dirección. Se muestra/oculta desde el padre (atributo hidden).
+// Al crear, dispara el evento 'address:created' (detail = dirección creada) que burbujea.
+// Al cancelar, dispara 'address:cancel'.
+const REGIONES = [
+  'Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Coquimbo',
+  'Valparaíso', 'Metropolitana de Santiago', "Libertador General Bernardo O'Higgins",
+  'Maule', 'Ñuble', 'Biobío', 'La Araucanía', 'Los Ríos', 'Los Lagos',
+  'Aysén del General Carlos Ibáñez del Campo', 'Magallanes y de la Antártica Chilena',
+];
+---
+
+<form class="address-form" data-address-form hidden>
+  <div class="grid">
+    <label class="f"><span>Alias *</span><input name="alias" required placeholder="Casa, Trabajo…" /></label>
+    <label class="f"><span>Nombre completo *</span><input name="fullName" required /></label>
+    <label class="f"><span>RUT *</span><input name="rut" required placeholder="12.345.678-9" /></label>
+    <label class="f"><span>Email *</span><input name="email" type="email" required /></label>
+    <label class="f"><span>Teléfono *</span><input name="phone" required placeholder="+56 9 …" /></label>
+    <label class="f">
+      <span>Región *</span>
+      <select name="region" required>
+        <option value="">Selecciona…</option>
+        {REGIONES.map((r) => <option value={r}>{r}</option>)}
+      </select>
+    </label>
+    <label class="f"><span>Ciudad *</span><input name="ciudad" required /></label>
+    <label class="f"><span>Comuna *</span><input name="comuna" required /></label>
+    <label class="f"><span>Calle *</span><input name="calle" required /></label>
+    <label class="f"><span>Número *</span><input name="numero" required /></label>
+    <label class="f"><span>Depto / Casa</span><input name="depto" placeholder="Opcional" /></label>
+    <label class="f f-full"><span>Referencia</span><input name="referencia" placeholder="Opcional — entre calles, color de casa…" /></label>
+  </div>
+  <p class="error" data-error hidden></p>
+  <div class="actions">
+    <button type="submit" class="btn-save" data-save>Guardar dirección</button>
+    <button type="button" class="btn-cancel" data-cancel>Cancelar</button>
+  </div>
+</form>
+
+<style>
+  .address-form[hidden] { display: none; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .f { display: flex; flex-direction: column; gap: 4px; }
+  .f-full { grid-column: 1 / -1; }
+  .f span { font-size: 0.78rem; color: var(--text-muted); }
+  .f input, .f select {
+    background: var(--bg-elevated);
+    border: 1.5px solid color-mix(in srgb, var(--text) 12%, transparent);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+  .f input:focus, .f select:focus { border-color: var(--accent); }
+
+  .error { font-size: 0.82rem; color: var(--danger); background: var(--danger-bg); padding: 8px 12px; border-radius: var(--radius-sm); margin-top: 12px; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-save {
+    padding: 11px 22px; border: none; border-radius: var(--radius-sm);
+    background: var(--accent); color: var(--on-accent);
+    font-family: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer;
+    transition: filter var(--transition);
+  }
+  .btn-save:hover { filter: brightness(1.08); }
+  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-cancel {
+    padding: 11px 18px; border: 1.5px solid color-mix(in srgb, var(--text) 15%, transparent);
+    border-radius: var(--radius-sm); background: none; color: var(--text-muted);
+    font-family: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+  }
+
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+</style>
+
+<script>
+  import { createAddress, type NewAddress } from '../../lib/api';
+  import { initAuth, userStore } from '../../stores/auth';
+
+  initAuth();
+  const me = userStore.get();
+
+  document.querySelectorAll<HTMLFormElement>('[data-address-form]').forEach((form) => {
+    const errorEl = form.querySelector<HTMLElement>('[data-error]')!;
+    const saveBtn = form.querySelector<HTMLButtonElement>('[data-save]')!;
+    const emailInput = form.querySelector<HTMLInputElement>('[name="email"]')!;
+    const nameInput  = form.querySelector<HTMLInputElement>('[name="fullName"]')!;
+
+    // Pre-llena email y nombre con los datos de la cuenta
+    if (me?.email && !emailInput.value) emailInput.value = me.email;
+    if (me?.name && !nameInput.value) nameInput.value = me.name;
+
+    form.querySelector('[data-cancel]')!.addEventListener('click', () => {
+      form.hidden = true;
+      errorEl.hidden = true;
+      form.dispatchEvent(new CustomEvent('address:cancel', { bubbles: true }));
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const data: NewAddress = {
+        alias: String(fd.get('alias') || '').trim(),
+        fullName: String(fd.get('fullName') || '').trim(),
+        rut: String(fd.get('rut') || '').trim(),
+        email: String(fd.get('email') || '').trim(),
+        phone: String(fd.get('phone') || '').trim(),
+        region: String(fd.get('region') || '').trim(),
+        ciudad: String(fd.get('ciudad') || '').trim(),
+        comuna: String(fd.get('comuna') || '').trim(),
+        calle: String(fd.get('calle') || '').trim(),
+        numero: String(fd.get('numero') || '').trim(),
+        depto: String(fd.get('depto') || '').trim() || null,
+        referencia: String(fd.get('referencia') || '').trim() || null,
+      };
+      saveBtn.disabled = true;
+      errorEl.hidden = true;
+      try {
+        const created = await createAddress(data);
+        form.reset();
+        form.hidden = true;
+        form.dispatchEvent(new CustomEvent('address:created', { bubbles: true, detail: created }));
+      } catch (err) {
+        errorEl.textContent = err instanceof Error ? err.message : 'No se pudo guardar';
+        errorEl.hidden = false;
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+  });
+</script>

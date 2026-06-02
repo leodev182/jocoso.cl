@@ -146,10 +146,11 @@ export interface Address {
 
 export type NewAddress = Omit<Address, 'id' | 'isDefault'>;
 
-const authHeaders = (token: string) => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${token}`,
-});
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+function getAccessToken(): string | null {
+  return typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
+}
 
 async function parseError(res: Response, fallback: string): Promise<string> {
   const body = await res.json().catch(() => null);
@@ -157,46 +158,90 @@ async function parseError(res: Response, fallback: string): Promise<string> {
   return Array.isArray(msg) ? msg.join(', ') : (msg ?? fallback);
 }
 
-export async function getAddresses(token: string): Promise<Address[]> {
-  const res = await fetch(`${BASE}/addresses`, { headers: authHeaders(token) });
+// Renueva el access token usando el refresh token guardado. Devuelve el nuevo token o null.
+async function refreshSession(): Promise<string | null> {
+  const refreshToken = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('refreshToken') : null;
+  if (!refreshToken) return null;
+  try {
+    const res = await fetch(`${BASE}/auth/refresh`, {
+      method: 'POST', headers: JSON_HEADERS, body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    sessionStorage.setItem('accessToken', data.accessToken);
+    if (data.refreshToken) sessionStorage.setItem('refreshToken', data.refreshToken);
+    return data.accessToken;
+  } catch {
+    return null;
+  }
+}
+
+// fetch autenticado con refresh-on-401. Si no se puede renovar la sesión, limpia y manda a /login.
+async function authedFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  const run = (token: string | null) =>
+    fetch(`${BASE}${path}`, {
+      ...options,
+      headers: { ...(options.headers ?? {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+
+  let res = await run(getAccessToken());
+  if (res.status === 401) {
+    const fresh = await refreshSession();
+    if (fresh) {
+      res = await run(fresh);
+    } else {
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('refreshToken');
+      sessionStorage.removeItem('user');
+      location.href = `/login?redirect=${encodeURIComponent(location.pathname + location.search)}`;
+      throw new Error('Sesión expirada');
+    }
+  }
+  return res;
+}
+
+export async function getAddresses(): Promise<Address[]> {
+  const res = await authedFetch('/addresses');
   if (!res.ok) throw new Error(await parseError(res, 'No se pudieron cargar las direcciones'));
   return res.json();
 }
 
-export async function createAddress(token: string, data: NewAddress): Promise<Address> {
-  const res = await fetch(`${BASE}/addresses`, {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify(data),
-  });
+export async function createAddress(data: NewAddress): Promise<Address> {
+  const res = await authedFetch('/addresses', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(data) });
   if (!res.ok) throw new Error(await parseError(res, 'No se pudo crear la dirección'));
   return res.json();
 }
 
-export async function setDefaultAddress(token: string, id: string): Promise<void> {
-  const res = await fetch(`${BASE}/addresses/${id}/default`, { method: 'PATCH', headers: authHeaders(token) });
+export async function setDefaultAddress(id: string): Promise<void> {
+  const res = await authedFetch(`/addresses/${id}/default`, { method: 'PATCH' });
   if (!res.ok) throw new Error(await parseError(res, 'No se pudo marcar como predeterminada'));
 }
 
-export async function deleteAddress(token: string, id: string): Promise<void> {
-  const res = await fetch(`${BASE}/addresses/${id}`, { method: 'DELETE', headers: authHeaders(token) });
+export async function deleteAddress(id: string): Promise<void> {
+  const res = await authedFetch(`/addresses/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error(await parseError(res, 'No se pudo eliminar la dirección'));
 }
 
-// Edita el perfil del usuario autenticado (PATCH /auth/me, 204). Requiere accessToken.
-export async function updateProfile(
-  token: string,
-  data: { name?: string | null; phone?: string | null },
-): Promise<void> {
-  const res = await fetch(`${BASE}/auth/me`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) {
-    const msg = await res.json().catch(() => null);
-    throw new Error(msg?.message ?? 'No se pudo actualizar el perfil');
-  }
+export interface OrderItemInput { variantId: string; quantity: number; }
+
+// Crea la orden (POST /orders). Devuelve la orden con su id.
+export async function createOrder(data: { items: OrderItemInput[]; addressId?: string }): Promise<{ id: string }> {
+  const res = await authedFetch('/orders', { method: 'POST', headers: JSON_HEADERS, body: JSON.stringify(data) });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo crear el pedido'));
+  return res.json();
+}
+
+// Inicia el pago en MercadoPago (POST /payments/orders/:id). Devuelve la URL de checkout.
+export async function initiatePayment(orderId: string): Promise<{ paymentId: string; checkoutUrl: string }> {
+  const res = await authedFetch(`/payments/orders/${orderId}`, { method: 'POST' });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo iniciar el pago'));
+  return res.json();
+}
+
+// Edita el perfil del usuario autenticado (PATCH /auth/me, 204).
+export async function updateProfile(data: { name?: string | null; phone?: string | null }): Promise<void> {
+  const res = await authedFetch('/auth/me', { method: 'PATCH', headers: JSON_HEADERS, body: JSON.stringify(data) });
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudo actualizar el perfil'));
 }
 
 // Login con Google: manda el ID token de GIS al backend, que lo verifica y devuelve la sesión

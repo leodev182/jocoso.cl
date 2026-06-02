@@ -1,13 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import RequireAuth from '../../components/auth/RequireAuth.astro';
+import AddressForm from '../../components/account/AddressForm.astro';
 
-const REGIONES = [
-  'Arica y Parinacota', 'Tarapacá', 'Antofagasta', 'Atacama', 'Coquimbo',
-  'Valparaíso', 'Metropolitana de Santiago', "Libertador General Bernardo O'Higgins",
-  'Maule', 'Ñuble', 'Biobío', 'La Araucanía', 'Los Ríos', 'Los Lagos',
-  'Aysén del General Carlos Ibáñez del Campo', 'Magallanes y de la Antártica Chilena',
-];
 const MAX = 3;
 ---
 
@@ -27,35 +22,11 @@ const MAX = 3;
     <p class="addr-empty" id="addr-empty" hidden>Aún no tienes direcciones guardadas.</p>
     <p class="addr-max" id="addr-max" hidden>Llegaste al máximo de {MAX} direcciones.</p>
 
-    <!-- ── Formulario ── -->
-    <form class="addr-form card" id="addr-form" hidden>
+    <!-- ── Formulario (componente reutilizable) ── -->
+    <div class="card addr-form-wrap" id="addr-form-wrap" hidden>
       <h2>Nueva dirección</h2>
-      <div class="grid">
-        <label class="f"><span>Alias *</span><input name="alias" required placeholder="Casa, Trabajo…" /></label>
-        <label class="f"><span>Nombre completo *</span><input name="fullName" required /></label>
-        <label class="f"><span>RUT *</span><input name="rut" required placeholder="12.345.678-9" /></label>
-        <label class="f"><span>Email *</span><input name="email" type="email" required /></label>
-        <label class="f"><span>Teléfono *</span><input name="phone" required placeholder="+56 9 …" /></label>
-        <label class="f">
-          <span>Región *</span>
-          <select name="region" required>
-            <option value="">Selecciona…</option>
-            {REGIONES.map((r) => <option value={r}>{r}</option>)}
-          </select>
-        </label>
-        <label class="f"><span>Ciudad *</span><input name="ciudad" required /></label>
-        <label class="f"><span>Comuna *</span><input name="comuna" required /></label>
-        <label class="f"><span>Calle *</span><input name="calle" required /></label>
-        <label class="f"><span>Número *</span><input name="numero" required /></label>
-        <label class="f"><span>Depto / Casa</span><input name="depto" placeholder="Opcional" /></label>
-        <label class="f f-full"><span>Referencia</span><input name="referencia" placeholder="Opcional — entre calles, color de casa…" /></label>
-      </div>
-      <p class="error" id="form-error" hidden></p>
-      <div class="form-actions">
-        <button type="submit" class="btn-save" id="btn-save">Guardar dirección</button>
-        <button type="button" class="btn-cancel" id="btn-cancel">Cancelar</button>
-      </div>
-    </form>
+      <AddressForm />
+    </div>
   </section>
 </Base>
 
@@ -110,58 +81,20 @@ const MAX = 3;
   :global(.ai-default) { color: var(--accent); }
   :global(.ai-delete) { color: var(--danger); }
 
-  /* ── Form ── */
-  .addr-form { margin-top: 24px; }
-  .addr-form[hidden] { display: none; }
-  .addr-form h2 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .f { display: flex; flex-direction: column; gap: 4px; }
-  .f-full { grid-column: 1 / -1; }
-  .f span { font-size: 0.78rem; color: var(--text-muted); }
-  .f input, .f select {
-    background: var(--bg-elevated);
-    border: 1.5px solid color-mix(in srgb, var(--text) 12%, transparent);
-    border-radius: var(--radius-sm);
-    padding: 9px 12px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color var(--transition);
-  }
-  .f input:focus, .f select:focus { border-color: var(--accent); }
-
-  .form-actions { display: flex; gap: 10px; margin-top: 18px; }
-  .btn-save {
-    padding: 11px 22px; border: none; border-radius: var(--radius-sm);
-    background: var(--accent); color: var(--on-accent);
-    font-family: inherit; font-weight: 700; font-size: 0.85rem; cursor: pointer;
-    transition: filter var(--transition);
-  }
-  .btn-save:hover { filter: brightness(1.08); }
-  .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-  .btn-cancel {
-    padding: 11px 18px; border: 1.5px solid color-mix(in srgb, var(--text) 15%, transparent);
-    border-radius: var(--radius-sm); background: none; color: var(--text-muted);
-    font-family: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer;
-  }
-
-  @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  /* Contenedor del formulario (el form en sí vive en AddressForm) */
+  .addr-form-wrap { margin-top: 24px; }
+  .addr-form-wrap[hidden] { display: none; }
+  .addr-form-wrap h2 { font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 16px; }
 </style>
 
 <script>
-  import { initAuth, tokenStore, userStore } from '../../stores/auth';
-  import { getAddresses, createAddress, setDefaultAddress, deleteAddress, type Address, type NewAddress } from '../../lib/api';
+  import { getAddresses, setDefaultAddress, deleteAddress, type Address } from '../../lib/api';
 
   const MAX = 3;
-  initAuth();
-  const token = tokenStore.get();
-  const me = userStore.get();
-
   const $ = (id: string) => document.getElementById(id)!;
   const listEl = $('addr-list');
-  const form = $('addr-form') as HTMLFormElement;
-  const formError = $('form-error');
+  const wrap = $('addr-form-wrap');
+  const addrForm = document.querySelector<HTMLFormElement>('[data-address-form]')!;
   const globalError = $('addr-error');
 
   let addresses: Address[] = [];
@@ -196,13 +129,12 @@ const MAX = 3;
 
     $('addr-empty').hidden = addresses.length > 0;
     $('addr-max').hidden = addresses.length < MAX;
-    ($('btn-add') as HTMLButtonElement).hidden = addresses.length >= MAX || !form.hidden;
+    ($('btn-add') as HTMLButtonElement).hidden = addresses.length >= MAX || !wrap.hidden;
   }
 
   async function load() {
-    if (!token) { location.replace('/login?redirect=/cuenta/direcciones'); return; }
     try {
-      addresses = await getAddresses(token);
+      addresses = await getAddresses();
       render();
     } catch (err) {
       $('addr-loading').hidden = true;
@@ -214,13 +146,13 @@ const MAX = 3;
   // Acciones (delegación)
   listEl.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-id]');
-    if (!btn || !token) return;
+    if (!btn) return;
     const id = btn.dataset.id!;
     try {
-      if (btn.classList.contains('ai-default')) await setDefaultAddress(token, id);
+      if (btn.classList.contains('ai-default')) await setDefaultAddress(id);
       else if (btn.classList.contains('ai-delete')) {
         if (!confirm('¿Eliminar esta dirección?')) return;
-        await deleteAddress(token, id);
+        await deleteAddress(id);
       }
       await load();
     } catch (err) {
@@ -229,51 +161,16 @@ const MAX = 3;
     }
   });
 
-  // Mostrar/ocultar form (pre-llena email y nombre con los datos de la cuenta)
+  // Abrir el formulario (el componente AddressForm pre-llena email/nombre solo)
   $('btn-add').addEventListener('click', () => {
-    form.hidden = false;
+    wrap.hidden = false;
+    addrForm.hidden = false;
     ($('btn-add') as HTMLButtonElement).hidden = true;
-    const emailInput = form.querySelector<HTMLInputElement>('[name="email"]')!;
-    const nameInput  = form.querySelector<HTMLInputElement>('[name="fullName"]')!;
-    if (me?.email && !emailInput.value) emailInput.value = me.email;
-    if (me?.name && !nameInput.value) nameInput.value = me.name;
   });
-  $('btn-cancel').addEventListener('click', () => { form.reset(); form.hidden = true; formError.hidden = true; render(); });
 
-  // Crear
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!token) return;
-    const fd = new FormData(form);
-    const data: NewAddress = {
-      alias: String(fd.get('alias') || '').trim(),
-      fullName: String(fd.get('fullName') || '').trim(),
-      rut: String(fd.get('rut') || '').trim(),
-      email: String(fd.get('email') || '').trim(),
-      phone: String(fd.get('phone') || '').trim(),
-      region: String(fd.get('region') || '').trim(),
-      ciudad: String(fd.get('ciudad') || '').trim(),
-      comuna: String(fd.get('comuna') || '').trim(),
-      calle: String(fd.get('calle') || '').trim(),
-      numero: String(fd.get('numero') || '').trim(),
-      depto: String(fd.get('depto') || '').trim() || null,
-      referencia: String(fd.get('referencia') || '').trim() || null,
-    };
-    const saveBtn = $('btn-save') as HTMLButtonElement;
-    saveBtn.disabled = true;
-    formError.hidden = true;
-    try {
-      await createAddress(token, data);
-      form.reset();
-      form.hidden = true;
-      await load();
-    } catch (err) {
-      formError.textContent = err instanceof Error ? err.message : 'No se pudo guardar';
-      formError.hidden = false;
-    } finally {
-      saveBtn.disabled = false;
-    }
-  });
+  // Eventos que emite el AddressForm
+  document.addEventListener('address:created', () => { wrap.hidden = true; load(); });
+  document.addEventListener('address:cancel', () => { wrap.hidden = true; render(); });
 
   load();
 </script>
