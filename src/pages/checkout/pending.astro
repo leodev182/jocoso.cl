@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Pago pendiente">
+  <section class="result">
+    <div class="icon pend">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+      </svg>
+    </div>
+    <h1>Tu pago está pendiente</h1>
+    <p class="sub">Estamos esperando la confirmación del pago. Cuando se acredite, procesaremos tu pedido y te avisaremos por correo.</p>
+    <div class="actions">
+      <a href="/cuenta" class="btn-primary">Mi cuenta</a>
+      <a href="/" class="btn-ghost">Volver al inicio</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .result {
+    max-width: 560px; margin: 0 auto; padding: 64px 24px;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px;
+  }
+  .icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .icon.pend { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+  .result h1 { font-size: 1.6rem; font-weight: 800; color: var(--text); }
+  .sub { color: var(--text-muted); line-height: 1.6; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .btn-primary, .btn-ghost { padding: 12px 26px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem; }
+  .btn-primary { background: var(--accent); color: var(--on-accent); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { border: 1.5px solid color-mix(in srgb, var(--text) 25%, transparent); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+</style>
