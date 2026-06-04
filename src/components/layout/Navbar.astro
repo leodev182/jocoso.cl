@@ -51,7 +51,7 @@ const navLinks = [
 
         <ThemeSwitch />
 
-        <a href="/cuenta" class="icon-btn" aria-label="Mi cuenta">
+        <a href="/cuenta" class="icon-btn" id="user-btn" aria-label="Mi cuenta">
           <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
           </svg>
@@ -249,6 +249,15 @@ const navLinks = [
   .icon-btn:hover {
     color: var(--text);
     background: color-mix(in srgb, var(--text) 6%, transparent);
+  }
+  .icon-btn.user-logged {
+    color: var(--accent);
+    filter: drop-shadow(0 0 5px var(--accent)) drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 55%, transparent));
+    transition: color var(--transition), filter var(--transition), background var(--transition);
+  }
+  .icon-btn.user-logged:hover {
+    color: var(--accent);
+    filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 20px var(--accent));
   }
 
   .cart-count {
@@ -539,7 +548,15 @@ const navLinks = [
   });
 
   import { cartStore, initCart } from '../../stores/cart';
+  import { initAuth, userStore } from '../../stores/auth';
+
+  initAuth();
   initCart();
+
+  const userBtn = document.getElementById('user-btn');
+  userStore.subscribe((user) => {
+    userBtn?.classList.toggle('user-logged', user !== null);
+  });
 
   const countEl = document.getElementById('cart-count');
   cartStore.subscribe((items) => {
