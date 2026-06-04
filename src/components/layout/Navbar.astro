@@ -57,6 +57,12 @@ const navLinks = [
           </svg>
         </a>
 
+        <a href="/cuenta/favoritos" class="icon-btn" id="wish-btn" aria-label="Mi wishlist">
+          <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+          </svg>
+        </a>
+
         <a href="/carrito" class="icon-btn" id="cart-btn" aria-label="Ver carrito">
           <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
@@ -249,6 +255,19 @@ const navLinks = [
   .icon-btn.user-logged:hover {
     color: var(--accent);
     filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 20px var(--accent));
+  }
+
+  /* Corazón neon cuando hay items en wishlist */
+  .icon-btn.wish-active {
+    color: #f97316;
+    filter: drop-shadow(0 0 5px #f97316) drop-shadow(0 0 12px rgba(249,115,22,0.5));
+    transition: color var(--transition), filter var(--transition);
+  }
+  .icon-btn.wish-active svg {
+    fill: #f97316;
+  }
+  .icon-btn.wish-active:hover {
+    filter: drop-shadow(0 0 8px #f97316) drop-shadow(0 0 20px #f97316);
   }
 
   .cart-count {
@@ -540,13 +559,20 @@ const navLinks = [
 
   import { cartStore, initCart } from '../../stores/cart';
   import { initAuth, userStore } from '../../stores/auth';
+  import { initWishlist, wishlistStore } from '../../stores/wishlist';
 
   initAuth();
   initCart();
+  initWishlist(); // lee de sessionStorage, sin fetch si ya está cacheado
 
   const userBtn = document.getElementById('user-btn');
   userStore.subscribe((user) => {
     userBtn?.classList.toggle('user-logged', user !== null);
+  });
+
+  const wishBtn = document.getElementById('wish-btn');
+  wishlistStore.subscribe((ids) => {
+    wishBtn?.classList.toggle('wish-active', ids.size > 0);
   });
 
   const countEl = document.getElementById('cart-count');

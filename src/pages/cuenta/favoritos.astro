@@ -88,61 +88,63 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     gap: 16px;
   }
 
-  /* ── Fav card ── */
-  .fav-card {
+  /* ── Fav card — todo :global() porque se inyecta via innerHTML ── */
+  :global(.fav-card) {
     display: flex;
     flex-direction: column;
-    background: var(--bg-surface);
+    background: #1a1d24;
     border-radius: var(--radius-md);
-    border: 1px solid color-mix(in srgb, var(--text) 7%, transparent);
+    border: 1px solid rgba(255,255,255,0.07);
     overflow: hidden;
     transition: transform 220ms ease, border-color 220ms, box-shadow 220ms;
   }
-  .fav-card:hover {
+  :global(.fav-card:hover) {
     transform: translateY(-4px);
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
     box-shadow: 0 10px 32px rgba(0,0,0,0.2);
   }
 
-  .fav-img-wrap {
+  :global(.fav-img-wrap) {
     position: relative;
     aspect-ratio: 1;
-    background: var(--bg-elevated);
+    background: #22262f;
     overflow: hidden;
+    display: block;
   }
-  .fav-img-wrap img {
+  :global(.fav-img-wrap img) {
     width: 100%; height: 100%;
     object-fit: contain;
     padding: 14px;
     transition: transform 300ms ease;
   }
-  .fav-card:hover .fav-img-wrap img { transform: scale(1.05); }
+  :global(.fav-card:hover .fav-img-wrap img) { transform: scale(1.05); }
 
-  .fav-no-img {
+  :global(.fav-no-img) {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); opacity: 0.4;
+    color: rgba(255,255,255,0.4);
   }
 
-  .fav-remove {
+  :global(.fav-remove) {
     position: absolute;
     top: 8px; right: 8px;
     width: 30px; height: 30px;
     border-radius: 50%;
-    border: none;
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
-    backdrop-filter: blur(8px);
-    color: #f87171;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #ffffff;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: opacity 200ms, transform 200ms;
+    transition: background 200ms, border-color 200ms;
   }
-  .fav-card:hover .fav-remove { opacity: 1; transform: scale(1); }
-  .fav-remove:hover { background: color-mix(in srgb, #f87171 20%, var(--bg)); }
+  :global(.fav-remove:hover) {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.5);
+  }
 
-  .fav-body {
+  :global(.fav-body) {
     padding: 12px 14px 14px;
     display: flex;
     flex-direction: column;
@@ -152,19 +154,19 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     color: inherit;
   }
 
-  .fav-brand {
+  :global(.fav-brand) {
     font-size: 0.7rem;
     font-weight: 700;
-    color: var(--text-muted);
+    color: rgba(255,255,255,0.55);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin: 0;
   }
 
-  .fav-title {
+  :global(.fav-title) {
     font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text);
+    color: #ffffff;
     margin: 0;
     line-height: 1.35;
     display: -webkit-box;
@@ -174,7 +176,7 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     flex: 1;
   }
 
-  .fav-price {
+  :global(.fav-price) {
     font-size: 1rem;
     font-weight: 800;
     color: var(--accent);
@@ -189,9 +191,9 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
 
 <script>
   import { initAuth } from '../../stores/auth';
-  import { getWishlist, removeFromWishlist } from '../../lib/api';
+  import { getWishlist } from '../../lib/api';
   import type { WishlistEntry } from '../../lib/api';
-  import { wishlistStore } from '../../stores/wishlist';
+  import { wishlistStore, toggleWishlist } from '../../stores/wishlist';
 
   initAuth();
 
@@ -232,11 +234,7 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
       e.stopPropagation();
       card.style.opacity = '0.4';
       try {
-        await removeFromWishlist(p.id);
-        // Actualiza el store
-        const ids = new Set(wishlistStore.get());
-        ids.delete(p.id);
-        wishlistStore.set(ids);
+        await toggleWishlist(p.id); // actualiza store + sessionStorage + API
         card.remove();
         if (grid.children.length === 0) {
           grid.hidden = true;
@@ -260,8 +258,10 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
         return;
       }
 
-      // Populate wishlist store
-      wishlistStore.set(new Set(items.map((w) => w.product.id)));
+      // Sincroniza store + sessionStorage con datos frescos del servidor
+      const freshIds = new Set(items.map((w) => w.product.id));
+      wishlistStore.set(freshIds);
+      sessionStorage.setItem('wishlist_ids', JSON.stringify([...freshIds]));
 
       items.forEach((entry) => grid.appendChild(buildCard(entry)));
       grid.hidden = false;
