@@ -409,15 +409,15 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
     border-radius: var(--radius-md);
   }
 
-  .attr-row {
+  :global(.attr-row) {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.83rem;
     gap: 12px;
   }
-  .attr-name { color: var(--text-muted); font-weight: 500; }
-  .attr-value { color: var(--text); font-weight: 600; text-align: right; }
+  :global(.attr-name) { color: var(--text-muted); font-weight: 500; }
+  :global(.attr-value) { color: var(--text); font-weight: 600; text-align: right; }
 
   /* ── Descripción al fondo ── */
   .description-full {
