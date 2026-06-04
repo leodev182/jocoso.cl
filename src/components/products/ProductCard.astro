@@ -290,13 +290,33 @@ const firstVariant = product.variants[0];
 </style>
 
 <script>
-  import { addToCart } from '../../stores/cart';
+  import { initCart, addToCart } from '../../stores/cart';
+  import { initAuth, tokenStore } from '../../stores/auth';
+  import { wishlistStore, initWishlist, toggleWishlist } from '../../stores/wishlist';
+
+  initAuth();
+  initCart();
+  initWishlist();
+
+  wishlistStore.subscribe((ids) => {
+    document.querySelectorAll<HTMLElement>('.product-card').forEach((card) => {
+      const btn = card.querySelector<HTMLButtonElement>('.btn-wishlist');
+      const svg = btn?.querySelector('svg');
+      if (ids.has(card.dataset.productId ?? '')) {
+        btn?.classList.add('active');
+        svg?.setAttribute('fill', 'currentColor');
+      } else {
+        btn?.classList.remove('active');
+        svg?.setAttribute('fill', 'none');
+      }
+    });
+  });
 
   document.querySelectorAll<HTMLElement>('.product-card').forEach((card) => {
-    const cartBtn  = card.querySelector<HTMLButtonElement>('.btn-add-cart');
-    const wishBtn  = card.querySelector<HTMLButtonElement>('.btn-wishlist');
-    const linkEl   = card.querySelector<HTMLAnchorElement>('.card-image-link');
-    const label    = cartBtn?.querySelector<HTMLElement>('.add-label');
+    const cartBtn = card.querySelector<HTMLButtonElement>('.btn-add-cart');
+    const wishBtn = card.querySelector<HTMLButtonElement>('.btn-wishlist');
+    const linkEl  = card.querySelector<HTMLAnchorElement>('.card-image-link');
+    const label   = cartBtn?.querySelector<HTMLElement>('.add-label');
 
     cartBtn?.addEventListener('click', (e) => {
       e.preventDefault();
@@ -323,15 +343,13 @@ const firstVariant = product.variants[0];
       }, 1500);
     });
 
-    wishBtn?.addEventListener('click', (e) => {
+    wishBtn?.addEventListener('click', async (e) => {
       e.preventDefault();
-      wishBtn.classList.toggle('active');
-      const svg = wishBtn.querySelector('svg');
-      if (wishBtn.classList.contains('active')) {
-        svg?.setAttribute('fill', 'currentColor');
-      } else {
-        svg?.setAttribute('fill', 'none');
+      if (!tokenStore.get()) {
+        location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+        return;
       }
+      await toggleWishlist(card.dataset.productId ?? '');
     });
   });
 </script>

@@ -244,6 +244,36 @@ export async function updateProfile(data: { name?: string | null; phone?: string
   if (!res.ok) throw new Error(await parseError(res, 'No se pudo actualizar el perfil'));
 }
 
+// ── Wishlist ──────────────────────────────────────────────────────────────────
+
+export interface WishlistProduct {
+  id: string;
+  title: string;
+  slug: string | null;
+  brand: string | null;
+  images: string[];
+  minPrice: number | null;
+}
+
+export interface WishlistEntry {
+  item: { id: string; userId: string; productId: string };
+  product: WishlistProduct;
+}
+
+export async function getWishlist(): Promise<WishlistEntry[]> {
+  const res = await authedFetch('/wishlist');
+  if (!res.ok) return [];
+  return res.json();
+}
+
+export async function addToWishlist(productId: string): Promise<void> {
+  await authedFetch(`/wishlist/${productId}`, { method: 'POST' });
+}
+
+export async function removeFromWishlist(productId: string): Promise<void> {
+  await authedFetch(`/wishlist/${productId}`, { method: 'DELETE' });
+}
+
 // Login con Google: manda el ID token de GIS al backend, que lo verifica y devuelve la sesión
 export async function loginWithGoogle(idToken: string): Promise<AuthResponse> {
   const res = await fetch(`${BASE}/auth/google`, {

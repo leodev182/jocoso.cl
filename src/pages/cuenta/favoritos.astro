@@ -1,0 +1,274 @@
+---
+import Base from '../../layouts/Base.astro';
+import RequireAuth from '../../components/auth/RequireAuth.astro';
+---
+
+<Base title="Mis Favoritos">
+  <RequireAuth />
+  <section class="favorites">
+    <div class="fav-header">
+      <a href="/cuenta" class="back-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Mi cuenta
+      </a>
+      <h1>Mis Favoritos</h1>
+    </div>
+
+    <div id="fav-loading" class="state-msg">Cargando...</div>
+    <div id="fav-empty" class="state-msg" hidden>
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </svg>
+      <p>Aún no tienes favoritos.</p>
+      <a href="/productos" class="btn-browse">Ver productos</a>
+    </div>
+
+    <div id="fav-grid" class="fav-grid" hidden></div>
+  </section>
+</Base>
+
+<style>
+  .favorites {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  .fav-header { margin-bottom: 28px; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    transition: color var(--transition);
+  }
+  .back-link:hover { color: var(--accent); }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0;
+  }
+
+  .state-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 80px 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .state-msg p { margin: 0; }
+
+  .btn-browse {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 24px;
+    background: var(--accent);
+    color: #0d0f14;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: var(--radius-sm);
+    transition: filter var(--transition);
+  }
+  .btn-browse:hover { filter: brightness(1.08); }
+
+  .fav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── Fav card ── */
+  .fav-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--text) 7%, transparent);
+    overflow: hidden;
+    transition: transform 220ms ease, border-color 220ms, box-shadow 220ms;
+  }
+  .fav-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.2);
+  }
+
+  .fav-img-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    background: var(--bg-elevated);
+    overflow: hidden;
+  }
+  .fav-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    padding: 14px;
+    transition: transform 300ms ease;
+  }
+  .fav-card:hover .fav-img-wrap img { transform: scale(1.05); }
+
+  .fav-no-img {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); opacity: 0.4;
+  }
+
+  .fav-remove {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: color-mix(in srgb, var(--bg) 70%, transparent);
+    backdrop-filter: blur(8px);
+    color: #f87171;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 200ms, transform 200ms;
+  }
+  .fav-card:hover .fav-remove { opacity: 1; transform: scale(1); }
+  .fav-remove:hover { background: color-mix(in srgb, #f87171 20%, var(--bg)); }
+
+  .fav-body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .fav-brand {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  .fav-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .fav-price {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 480px) {
+    .fav-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    h1 { font-size: 1.4rem; }
+  }
+</style>
+
+<script>
+  import { initAuth } from '../../stores/auth';
+  import { getWishlist, removeFromWishlist } from '../../lib/api';
+  import type { WishlistEntry } from '../../lib/api';
+  import { wishlistStore } from '../../stores/wishlist';
+
+  initAuth();
+
+  const loading = document.getElementById('fav-loading')!;
+  const empty   = document.getElementById('fav-empty')!;
+  const grid    = document.getElementById('fav-grid')!;
+
+  function buildCard(entry: WishlistEntry): HTMLElement {
+    const p = entry.product;
+    const href = p.slug ? `/productos/${p.slug}` : `/productos/${p.id}`;
+    const img = p.images?.[0] ?? null;
+
+    const card = document.createElement('div');
+    card.className = 'fav-card';
+    card.dataset.productId = p.id;
+
+    card.innerHTML = `
+      <a href="${href}" class="fav-img-wrap">
+        ${img
+          ? `<img src="${img}" alt="${p.title}" loading="lazy" />`
+          : `<div class="fav-no-img"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>`
+        }
+        <button class="fav-remove" aria-label="Quitar de favoritos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </a>
+      <a href="${href}" class="fav-body">
+        ${p.brand ? `<p class="fav-brand">${p.brand}</p>` : ''}
+        <p class="fav-title">${p.title}</p>
+        ${p.minPrice !== null ? `<span class="fav-price">$ ${p.minPrice.toLocaleString('es-CL')}</span>` : ''}
+      </a>
+    `;
+
+    card.querySelector('.fav-remove')?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      card.style.opacity = '0.4';
+      try {
+        await removeFromWishlist(p.id);
+        // Actualiza el store
+        const ids = new Set(wishlistStore.get());
+        ids.delete(p.id);
+        wishlistStore.set(ids);
+        card.remove();
+        if (grid.children.length === 0) {
+          grid.hidden = true;
+          empty.hidden = false;
+        }
+      } catch {
+        card.style.opacity = '';
+      }
+    });
+
+    return card;
+  }
+
+  async function load() {
+    try {
+      const items = await getWishlist();
+      loading.hidden = true;
+
+      if (items.length === 0) {
+        empty.hidden = false;
+        return;
+      }
+
+      // Populate wishlist store
+      wishlistStore.set(new Set(items.map((w) => w.product.id)));
+
+      items.forEach((entry) => grid.appendChild(buildCard(entry)));
+      grid.hidden = false;
+    } catch {
+      loading.textContent = 'No se pudieron cargar los favoritos.';
+    }
+  }
+
+  load();
+</script>
