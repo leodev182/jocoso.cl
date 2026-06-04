@@ -1,8 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import RequireAuth from '../components/auth/RequireAuth.astro';
 ---
 
 <Base title="Carrito">
+  <RequireAuth />
   <section class="cart">
     <h1 class="cart-title">Tu carrito</h1>
     <div id="cart-root"></div>

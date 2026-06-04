@@ -444,6 +444,8 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
 
 <script>
   import { addToCart } from '../../stores/cart';
+  import { initAuth, tokenStore } from '../../stores/auth';
+  initAuth();
 
   const mainImg   = document.getElementById('main-img') as HTMLImageElement | null;
   const galleryEl = document.querySelector<HTMLElement>('.gallery');
@@ -538,6 +540,10 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
 
   // Agregar al carrito
   addBtn?.addEventListener('click', () => {
+    if (!tokenStore.get()) {
+      location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
+      return;
+    }
     addToCart({
       variantId: selected.id,
       productId: product.id,
