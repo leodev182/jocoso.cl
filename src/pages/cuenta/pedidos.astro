@@ -130,7 +130,11 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
 
   :global(.order-items-count) {
     font-size: 0.82rem;
+    color: var(--text);
+  }
+  :global(.order-item-qty) {
     color: var(--text-muted);
+    font-weight: 400;
   }
 
   :global(.order-tracking) {
@@ -245,7 +249,9 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
         </div>
         <div class="order-bottom">
           <div class="order-details">
-            <span class="order-items-count">${o.items.length} ${o.items.length === 1 ? 'producto' : 'productos'}</span>
+            ${o.items.map(item =>
+              `<span class="order-items-count">${item.productName ?? item.sku ?? item.variantId} <span class="order-item-qty">× ${item.quantity}</span></span>`
+            ).join('')}
             ${tracking}
           </div>
           <span class="order-total">$ ${o.totalAmount.toLocaleString('es-CL')}</span>

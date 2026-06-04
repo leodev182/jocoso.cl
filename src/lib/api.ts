@@ -253,6 +253,8 @@ export interface OrderItem {
   variantId: string;
   quantity: number;
   price: number;
+  productName?: string;
+  sku?: string;
 }
 
 export interface MyOrder {
