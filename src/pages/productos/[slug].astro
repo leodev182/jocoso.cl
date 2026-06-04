@@ -35,12 +35,34 @@ const diffAttrNames = new Set<string>();
   for (const [name, values] of byName) if (values.size > 1) diffAttrNames.add(name);
 }
 
+// Detecta si "Color" es un atributo diferenciador → swatches en vez de texto
+const isColorVariant = [...diffAttrNames].some(n => n.toLowerCase() === 'color');
+
+// Mapa de nombres de color en español/inglés → hex
+function toColorHex(val: string): string {
+  const map: Record<string, string> = {
+    blanco: '#f0f0f0', negro: '#1a1a1a', azul: '#2563eb', rojo: '#dc2626',
+    verde: '#16a34a', amarillo: '#eab308', naranja: '#f97316', morado: '#7c3aed',
+    rosado: '#ec4899', gris: '#6b7280', plateado: '#94a3b8', dorado: '#d97706',
+    cyan: '#2EE6FF', celeste: '#38bdf8', cafe: '#92400e', beige: '#d4b483',
+    white: '#f0f0f0', black: '#1a1a1a', blue: '#2563eb', red: '#dc2626',
+    green: '#16a34a', gray: '#6b7280', silver: '#94a3b8', gold: '#d97706',
+  };
+  return map[val.toLowerCase()] ?? val;
+}
+
 // Etiqueta de cada variante: los atributos que la distinguen, o el SKU como fallback
 const variantsWithLabel = product.variants.map((v) => {
   const distinguishing = (v.attributes ?? [])
     .filter((a) => diffAttrNames.has(a.name))
     .map((a) => a.value);
-  return { v, label: distinguishing.length ? distinguishing.join(' · ') : v.sku };
+  const colorVal = (v.attributes ?? []).find(a => a.name.toLowerCase() === 'color')?.value ?? null;
+  return {
+    v,
+    label: distinguishing.length ? distinguishing.join(' · ') : v.sku,
+    colorHex: colorVal ? toColorHex(colorVal) : null,
+    colorLabel: colorVal ?? null,
+  };
 });
 
 // Galería inicial: imágenes de la variante activa si tiene; si no, las del producto
@@ -101,21 +123,28 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
 
         {multiVariant && (
           <div class="variants">
-            <div class="variant-list">
-              {variantsWithLabel.map(({ v, label }, i) => (
+            <div class:list={['variant-list', { 'variant-list--color': isColorVariant }]}>
+              {variantsWithLabel.map(({ v, label, colorHex, colorLabel }, i) => (
                 <button
-                  class:list={['variant', { active: i === 0 }]}
+                  class:list={['variant', { active: i === 0, 'variant--color': isColorVariant }]}
                   data-id={v.id}
                   data-price={v.price}
                   data-sku={v.sku}
                   data-stock={v.stock}
                   data-images={JSON.stringify(v.images ?? [])}
+                  data-attributes={JSON.stringify(v.attributes ?? [])}
                   disabled={v.stock === 0}
+                  title={label}
+                  aria-label={label}
                 >
-                  {label}
+                  {isColorVariant && colorHex
+                    ? <span class="color-swatch" style={`background:${colorHex}`}></span>
+                    : label
+                  }
                 </button>
               ))}
             </div>
+            {isColorVariant && <p class="variant-label" id="variant-label">{variantsWithLabel[0]?.label}</p>}
           </div>
         )}
 
@@ -156,14 +185,27 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
           </div>
         )}
 
-        {product.description && (
-          <div class="description">
-            <h2>Descripción</h2>
-            <p>{product.description}</p>
+        <!-- Atributos de la variante activa — se actualiza por JS al cambiar variante -->
+        {(product.variants[0]?.attributes?.length ?? 0) > 0 && (
+          <div class="attrs-panel" id="attrs-panel">
+            {product.variants[0].attributes.map(a => (
+              <div class="attr-row">
+                <span class="attr-name">{a.name}</span>
+                <span class="attr-value">{a.value}</span>
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
+
+    <!-- Descripción larga al fondo -->
+    {product.description && (
+      <div class="description-full">
+        <h2>Descripción</h2>
+        <p>{product.description}</p>
+      </div>
+    )}
   </article>
 </Base>
 
@@ -329,9 +371,62 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
   .hashtags { display: flex; flex-wrap: wrap; gap: 4px 10px; }
   .hashtag { font-size: 0.78rem; font-weight: 600; color: var(--c, var(--text-muted)); opacity: 0.85; }
 
-  .description { margin-top: 8px; border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent); padding-top: 16px; }
-  .description h2 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
-  .description p { color: var(--text-muted); line-height: 1.7; white-space: pre-line; }
+  /* ── Swatches de color ── */
+  .variant-list--color { gap: 10px; }
+
+  .variant--color {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    padding: 3px;
+    background: none;
+  }
+  .variant--color.active { border-color: var(--accent); box-shadow: var(--neon-subtle); }
+  .variant--color:disabled { opacity: 0.35; }
+
+  .color-swatch {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .variant-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  /* ── Panel de atributos ── */
+  .attrs-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px;
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+    border-radius: var(--radius-md);
+  }
+
+  .attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.83rem;
+    gap: 12px;
+  }
+  .attr-name { color: var(--text-muted); font-weight: 500; }
+  .attr-value { color: var(--text); font-weight: 600; text-align: right; }
+
+  /* ── Descripción al fondo ── */
+  .description-full {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+  }
+  .description-full h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+  .description-full p { color: var(--text-muted); line-height: 1.8; white-space: pre-line; max-width: 720px; }
 
   @media (max-width: 768px) {
     .detail-grid { grid-template-columns: 1fr; gap: 24px; }
@@ -352,9 +447,11 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
   const qtyValue  = document.getElementById('qty-value');
   const qtyMinus  = document.getElementById('qty-minus');
   const qtyPlus   = document.getElementById('qty-plus');
-  const addBtn    = document.getElementById('add-cart') as HTMLButtonElement | null;
-  const cartLabel = document.getElementById('cart-label');
-  const wishBtn   = document.getElementById('add-wish');
+  const addBtn      = document.getElementById('add-cart') as HTMLButtonElement | null;
+  const cartLabel   = document.getElementById('cart-label');
+  const wishBtn     = document.getElementById('add-wish');
+  const attrsPanel  = document.getElementById('attrs-panel');
+  const variantLbl  = document.getElementById('variant-label');
 
   const fmt = (n: number) => `$ ${n.toLocaleString('es-CL')}`;
 
@@ -413,6 +510,17 @@ const galleryImages = firstVarImages.length ? firstVarImages : images;
 
       const vImgs: string[] = JSON.parse(v.dataset.images ?? '[]');
       renderGallery(vImgs.length ? vImgs : productImages);
+
+      // Actualizar panel de atributos
+      const attrs: { name: string; value: string }[] = JSON.parse(v.dataset.attributes ?? '[]');
+      if (attrsPanel && attrs.length) {
+        attrsPanel.innerHTML = attrs.map(a =>
+          `<div class="attr-row"><span class="attr-name">${a.name}</span><span class="attr-value">${a.value}</span></div>`
+        ).join('');
+      }
+
+      // Actualizar label de color
+      if (variantLbl) variantLbl.textContent = v.title ?? v.getAttribute('aria-label') ?? '';
     });
   });
 
