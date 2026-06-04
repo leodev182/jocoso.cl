@@ -244,6 +244,33 @@ export async function updateProfile(data: { name?: string | null; phone?: string
   if (!res.ok) throw new Error(await parseError(res, 'No se pudo actualizar el perfil'));
 }
 
+// ── Pedidos ───────────────────────────────────────────────────────────────────
+
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+
+export interface OrderItem {
+  id: string;
+  variantId: string;
+  quantity: number;
+  price: number;
+}
+
+export interface MyOrder {
+  id: string;
+  status: OrderStatus;
+  totalAmount: number;
+  trackingCode: string | null;
+  items: OrderItem[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getMyOrders(page = 1, limit = 10): Promise<Paginated<MyOrder>> {
+  const res = await authedFetch(`/orders/my?page=${page}&limit=${limit}`);
+  if (!res.ok) throw new Error(await parseError(res, 'No se pudieron cargar los pedidos'));
+  return res.json();
+}
+
 // ── Wishlist ──────────────────────────────────────────────────────────────────
 
 export interface WishlistProduct {
