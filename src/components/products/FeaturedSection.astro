@@ -1,22 +1,24 @@
 ---
 import type { Product } from '../../lib/api';
-import ProductGrid from './ProductGrid.astro';
+import ShowcaseCard from './ShowcaseCard.astro';
 
 interface Props {
   products: Product[];
 }
 
 const { products } = Astro.props;
+const featured4 = products.slice(0, 4);
 ---
 
 {products.length > 0 && (
   <section class="featured-section">
     <div class="featured-inner">
 
-      <!-- Izquierda: grid de productos destacados -->
+      <!-- Izquierda: 4 showcase cards -->
       <div class="featured-left">
-        <h2 class="featured-title">Destacados</h2>
-        <ProductGrid products={products} minimal={true} />
+        <div class="sc-grid">
+          {featured4.map(p => <ShowcaseCard product={p} />)}
+        </div>
       </div>
 
       <!-- Derecha: tarjeta de producto (bajada del hero) -->
@@ -72,12 +74,11 @@ const { products } = Astro.props;
     align-items: center;
   }
 
-  .featured-title {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.5px;
-    margin: 0 0 24px;
+  .sc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 14px;
+    justify-content: start;
   }
 
   /* ── Tarjeta derecha ── */
