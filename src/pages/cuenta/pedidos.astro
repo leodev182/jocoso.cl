@@ -76,8 +76,8 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
   }
   .state-msg p { margin: 0; }
 
-  /* ── Orden card ── */
-  .order-card {
+  /* ── Orden card (global: el HTML se inyecta vía innerHTML sin hash de Astro) ── */
+  :global(.order-card) {
     background: var(--bg-surface);
     border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
     border-radius: var(--radius-md);
@@ -85,38 +85,36 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     margin-bottom: 10px;
     transition: border-color var(--transition);
   }
-  .order-card:hover {
+  :global(.order-card:hover) {
     border-color: color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
-  /* Fila superior: ID + fecha a la izq, badge a la der */
-  .order-top {
+  :global(.order-top) {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
   }
 
-  .order-meta {
+  :global(.order-meta) {
     display: flex;
     align-items: center;
     gap: 12px;
   }
 
-  .order-id {
+  :global(.order-id) {
     font-size: 0.8rem;
     font-weight: 800;
     color: var(--text);
     letter-spacing: 0.5px;
   }
 
-  .order-date {
+  :global(.order-date) {
     font-size: 0.78rem;
     color: var(--text-muted);
   }
 
-  /* Separador / fila inferior: items + total */
-  .order-bottom {
+  :global(.order-bottom) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -124,18 +122,18 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     border-top: 1px solid color-mix(in srgb, var(--text) 7%, transparent);
   }
 
-  .order-details {
+  :global(.order-details) {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
 
-  .order-items-count {
+  :global(.order-items-count) {
     font-size: 0.82rem;
     color: var(--text-muted);
   }
 
-  .order-tracking {
+  :global(.order-tracking) {
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -145,14 +143,13 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     letter-spacing: 0.3px;
   }
 
-  .order-total {
+  :global(.order-total) {
     font-size: 1.2rem;
     font-weight: 800;
     color: var(--accent);
   }
 
-  /* ── Status badge ── */
-  .status-badge {
+  :global(.status-badge) {
     display: inline-flex;
     align-items: center;
     padding: 4px 12px;
@@ -163,11 +160,11 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
     text-transform: uppercase;
     white-space: nowrap;
   }
-  .status-PENDING    { background: rgba(251,191,36,0.12);  color: #fbbf24; }
-  .status-CONFIRMED  { background: rgba(96,165,250,0.12);  color: #60a5fa; }
-  .status-SHIPPED    { background: rgba(167,139,250,0.12); color: #a78bfa; }
-  .status-DELIVERED  { background: rgba(74,222,128,0.12);  color: #4ade80; }
-  .status-CANCELLED  { background: rgba(248,113,113,0.12); color: #f87171; }
+  :global(.status-PENDING)   { background: rgba(251,191,36,0.12);  color: #fbbf24; }
+  :global(.status-CONFIRMED) { background: rgba(96,165,250,0.12);  color: #60a5fa; }
+  :global(.status-SHIPPED)   { background: rgba(167,139,250,0.12); color: #a78bfa; }
+  :global(.status-DELIVERED) { background: rgba(74,222,128,0.12);  color: #4ade80; }
+  :global(.status-CANCELLED) { background: rgba(248,113,113,0.12); color: #f87171; }
 
   /* ── Paginación ── */
   .pagination {
@@ -270,11 +267,12 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
       const res = await getMyOrders(page, LIMIT);
       loading.hidden = true;
 
-      if (res.data.length === 0 && page === 1) {
+      if (!res?.data?.length && page === 1) {
         empty.hidden = false;
         return;
       }
 
+      empty.hidden = true;
       list.innerHTML = res.data.map(renderOrder).join('');
       list.hidden = false;
 
@@ -287,7 +285,9 @@ import RequireAuth from '../../components/auth/RequireAuth.astro';
 
       currentPage = res.page;
     } catch {
+      loading.hidden = false;
       loading.textContent = 'No se pudieron cargar los pedidos.';
+      empty.hidden = true;
     }
   }
 
