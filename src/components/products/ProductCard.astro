@@ -320,12 +320,12 @@ const firstVariant = product.variants[0];
 
     cartBtn?.addEventListener('click', (e) => {
       e.preventDefault();
-      if (!tokenStore.get()) {
-        location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
-        return;
-      }
       if (cartBtn.dataset.multi === 'true') {
         window.location.href = linkEl?.href ?? '#';
+        return;
+      }
+      if (!tokenStore.get()) {
+        location.href = `/login?redirect=${encodeURIComponent(location.pathname)}`;
         return;
       }
       const d = card.dataset;
