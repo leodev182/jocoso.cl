@@ -8,16 +8,20 @@ interface Props {
   products: Product[];
   alt?: boolean;
   minimal?: boolean;
+  titleGradient?: string;
 }
 
-const { title, viewAllHref, products, alt = false, minimal = false } = Astro.props;
+const { title, viewAllHref, products, alt = false, minimal = false, titleGradient } = Astro.props;
 ---
 
 {products.length > 0 && (
   <section class={`product-section ${alt ? 'alt' : ''}`}>
     <div class="section-inner">
       <div class="section-header">
-        <h2 class="section-title">{title}</h2>
+        <h2
+          class="section-title"
+          style={titleGradient ? `background:${titleGradient};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding-bottom:0.1em` : undefined}
+        >{title}</h2>
         {viewAllHref && (
           <a href={viewAllHref} class="view-all">
             Ver todos
@@ -35,11 +39,15 @@ const { title, viewAllHref, products, alt = false, minimal = false } = Astro.pro
 
 <style>
   .product-section {
-    background: var(--bg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     padding: 48px 0;
   }
   .product-section.alt {
-    background: var(--bg-surface);
+    background: var(--glass-bg-alt);
   }
 
   .section-inner {

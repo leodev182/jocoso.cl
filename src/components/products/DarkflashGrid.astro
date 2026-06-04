@@ -43,7 +43,11 @@ const bottom = tail.slice(6, 9);
 
 <style>
   .df-section {
-    background: var(--bg-surface);
+    background: var(--glass-bg-alt);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     padding: 48px 0;
   }
 
@@ -57,11 +61,32 @@ const bottom = tail.slice(6, 9);
   }
 
   .df-title {
-    font-size: 1.4rem;
+    position: relative;
+    display: inline-block;
+    font-size: 2.2rem;
     font-weight: 800;
-    color: var(--text);
     letter-spacing: -0.5px;
     margin: 0;
+    line-height: 1;
+    padding: 0.12em 0.55em 0.18em;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #05204A 0%, #0A7FA0 50%, #2EE6FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .df-title::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    background: linear-gradient(135deg, rgba(46,230,255,0.45) 0%, rgba(28,200,229,0.40) 100%);
+    border: 1px solid rgba(46,230,255,0.5);
+    box-shadow: 0 4px 24px rgba(46,230,255,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+    z-index: -1;
   }
 
   .df-link {

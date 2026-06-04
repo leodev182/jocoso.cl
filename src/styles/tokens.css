@@ -28,12 +28,26 @@
   --radius-lg:    20px;
   --transition:   200ms ease;
 
+  /* ── Glass tokens (dark mode) ── */
+  --glass-bg:       rgba(255, 255, 255, 0.05);
+  --glass-bg-alt:   rgba(255, 255, 255, 0.08);
+  --glass-border:   rgba(255, 255, 255, 0.10);
+  --glass-blur:     blur(20px);
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
   /* Altura del header fijo (barra principal 64px + barra de categorías 40px) */
   --nav-height:    64px;
   --header-height: 104px;
 }
 
 [data-theme="light"] {
+  /* Glass tokens light mode — blanco semitransparente sobre los blobs */
+  --glass-bg:       rgba(255, 255, 255, 0.12);
+  --glass-bg-alt:   rgba(255, 255, 255, 0.20);
+  --glass-border:   rgba(15, 23, 42, 0.08);
+  --glass-blur:     blur(20px);
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
   --bg:           #FFFFFF;
   --bg-brand:     #F5F5F5;
   --bg-surface:   #FFFFFF;

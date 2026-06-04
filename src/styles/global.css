@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@700;800&display=swap');
 @import './tokens.css';
 
 *, *::before, *::after {
@@ -8,7 +8,7 @@
 }
 
 html {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   background-color: var(--bg);
   color: var(--text);
   scroll-behavior: smooth;
@@ -19,6 +19,11 @@ body {
   min-height: 100dvh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+[data-theme="light"] body {
+  background: linear-gradient(135deg, #b8eeff 0%, #ddf5ff 25%, #f0fbff 50%, #ffffff 100%);
+  min-height: 100dvh;
 }
 
 img, video {
@@ -47,6 +52,13 @@ button {
 /* El hidden attribute solo tiene display:none en la UA stylesheet sin !important,
    cualquier display en author styles lo pisa (ej: display:flex en .state-msg) */
 [hidden] { display: none !important; }
+
+/* Títulos de sección — JetBrains Mono en toda la app */
+.section-title,
+.df-title,
+.featured-title {
+  font-family: 'JetBrains Mono', monospace !important;
+}
 
 /* Utility */
 .neon-text   { text-shadow: var(--neon-text); color: var(--accent); }

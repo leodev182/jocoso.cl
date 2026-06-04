@@ -31,7 +31,10 @@ import Button from '../ui/Button.astro';
   /* ── Fondo full-width ── */
   /* Mobile first */
   .hero-section {
-    background: #FFFFFF;
+    background: rgba(255, 255, 255, 0.13);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
     display: flex;
     align-items: center;
     padding: 48px 0;
@@ -66,7 +69,6 @@ import Button from '../ui/Button.astro';
     .hero-ctas   { justify-content: flex-start; }
   }
 
-  /* ── Texto dark mode (sobre fondo blanco) ── */
   .hero-content {
     flex: 1;
     display: flex;
@@ -78,9 +80,12 @@ import Button from '../ui/Button.astro';
     display: inline-flex;
     width: fit-content;
     align-items: center;
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-    color: var(--accent-glow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    background: var(--glass-bg-alt);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    color: var(--accent);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1.2px;
@@ -90,22 +95,27 @@ import Button from '../ui/Button.astro';
   }
 
   .hero-headline {
-    font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(2.6rem, 5.5vw, 4.5rem);
     font-weight: 800;
     line-height: 1.05;
-    letter-spacing: -2px;
-    color: #111318;
+    letter-spacing: 0;
+    color: #ffffff;
     margin: 0;
   }
 
   .headline-accent {
     display: block;
-    color: var(--accent);
+    background: linear-gradient(135deg, #ffffff 0%, #2EE6FF 55%, #1CC8E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding-bottom: 0.15em;
   }
 
   .hero-sub {
     font-size: 1rem;
-    color: #555e6e;
+    color: var(--text-muted);
     line-height: 1.65;
     margin: 0;
     max-width: 420px;
@@ -119,37 +129,84 @@ import Button from '../ui/Button.astro';
 
   /* El layout del botón vive en ui/Button; aquí solo el color de la sección
      invertida (fondo claro), donde el ghost necesita texto/borde oscuro */
-  .hero-ctas :global(.btn.ghost) {
-    border-color: color-mix(in srgb, #111318 25%, transparent);
-    color: #111318;
-  }
-  .hero-ctas :global(.btn.ghost):hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  /* Ambos botones del hero — pill shape + glass */
+  .hero-ctas :global(.btn) {
+    border-radius: 999px;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    font-weight: 500;
+    padding: 9px 24px;
+    transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
   }
 
-  /* ── Light mode: gradiente azul ── */
-  :global([data-theme="light"]) .hero-section {
-    background: linear-gradient(135deg, #05204A 0%, #0d4a8a 50%, #1CC8E5 100%);
+  /* Primary — tinte cyan glass */
+  .hero-ctas :global(.btn.primary) {
+    background: linear-gradient(135deg, rgba(46,230,255,0.45) 0%, rgba(28,200,229,0.40) 100%);
+    border: 1px solid rgba(46,230,255,0.5);
+    box-shadow: 0 4px 24px rgba(46,230,255,0.25), inset 0 1px 0 rgba(255,255,255,0.2);
+    color: #fff;
   }
-  :global([data-theme="light"]) .hero-headline { color: #FFFFFF; }
-  :global([data-theme="light"]) .hero-sub      { color: rgba(255,255,255,0.8); }
-  :global([data-theme="light"]) .hero-badge {
+  .hero-ctas :global(.btn.primary):hover {
+    background: linear-gradient(135deg, rgba(46,230,255,0.65) 0%, rgba(28,200,229,0.60) 100%);
+    box-shadow: 0 8px 36px rgba(46,230,255,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+    filter: none;
+  }
+
+  /* Ghost — neutral glass */
+  .hero-ctas :global(.btn.ghost) {
     background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.3);
-    color: #FFFFFF;
+    border: 1px solid rgba(255,255,255,0.22);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+    color: var(--text);
   }
+  .hero-ctas :global(.btn.ghost):hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.35);
+    transform: translateY(-2px);
+    color: var(--text);
+  }
+
+  /* ── Light mode ── */
+  :global([data-theme="light"]) .hero-section {
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Gradiente oscuro navy → teal para el headline en light */
+  :global([data-theme="light"]) .hero-headline {
+    background: linear-gradient(135deg, #05204A 0%, #0d4a8a 50%, #1CC8E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  :global([data-theme="light"]) .headline-accent {
+    background: linear-gradient(135deg, #05204A 0%, #0A7FA0 50%, #1CC8E5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  :global([data-theme="light"]) .hero-sub { color: #444e5e; }
+
+  :global([data-theme="light"]) .hero-badge {
+    background: rgba(255,255,255,0.6);
+    border-color: rgba(15,23,42,0.12);
+    color: #05204A;
+  }
+
   :global([data-theme="light"]) .hero-ctas :global(.btn.primary) {
-    background: #FFFFFF;
+    background: linear-gradient(135deg, rgba(28,200,229,0.5) 0%, rgba(10,127,160,0.5) 100%);
+    border-color: rgba(28,200,229,0.55);
     color: #05204A;
   }
   :global([data-theme="light"]) .hero-ctas :global(.btn.ghost) {
-    border-color: rgba(255,255,255,0.4);
-    color: #FFFFFF;
+    background: rgba(255,255,255,0.65);
+    border-color: rgba(15,23,42,0.18);
+    color: #05204A;
   }
   :global([data-theme="light"]) .hero-ctas :global(.btn.ghost):hover {
-    border-color: #FFFFFF;
-    color: #FFFFFF;
+    border-color: #1CC8E5;
+    color: #05204A;
   }
 
   @keyframes float {

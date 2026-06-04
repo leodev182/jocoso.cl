@@ -6,8 +6,14 @@ interface Props {
   products: Product[];
 }
 
+import { minPrice } from '../../lib/api';
+
 const { products } = Astro.props;
-const featured4 = products.slice(0, 4);
+const featured4   = products.slice(0, 4);
+const spotlight   = products[4] ?? products[0];
+const spotImage   = spotlight?.variants[0]?.images?.[0] ?? spotlight?.images?.[0] ?? null;
+const spotPrice   = spotlight ? minPrice(spotlight.variants) : 0;
+const spotHref    = spotlight ? `/productos/${spotlight.slug ?? spotlight.id}` : '#';
 ---
 
 {products.length > 0 && (
@@ -29,22 +35,18 @@ const featured4 = products.slice(0, 4);
               <div class="card card-back-2"></div>
               <div class="card card-back-1"></div>
               <div class="card card-front">
-                <div class="card-img-area">
-                  <div class="card-img-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.35">
-                      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-                    </svg>
-                    <span>Foto producto</span>
-                  </div>
-                </div>
+                <a href={spotHref} class="card-img-area">
+                  <img src="/images/brand/G253FG.png" alt={spotlight?.title} class="spot-img" loading="lazy" />
+                </a>
                 <div class="card-body">
                   <div class="card-tags">
-                    <span class="tag">Gaming</span>
-                    <span class="tag tag-new">Nuevo</span>
+                    {spotlight?.tags.slice(0, 2).map(t => (
+                      <span class="tag" style={`background:${t.color}22;color:${t.color}`}>{t.name}</span>
+                    ))}
                   </div>
-                  <p class="card-name">Monitor Gaming 24" 165Hz IPS</p>
+                  <p class="card-name">{spotlight?.title}</p>
                   <div class="card-footer">
-                    <span class="card-price">$ 189.990</span>
+                    <span class="card-price">$ {spotPrice.toLocaleString('es-CL')}</span>
                     <span class="card-stock">En stock</span>
                   </div>
                 </div>
@@ -60,7 +62,11 @@ const featured4 = products.slice(0, 4);
 
 <style>
   .featured-section {
-    background: var(--bg);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     padding: 48px 0;
   }
 
@@ -157,6 +163,16 @@ const featured4 = products.slice(0, 4);
     inset: 0;
     background-image: radial-gradient(circle, color-mix(in srgb, var(--accent) 10%, transparent) 1px, transparent 1px);
     background-size: 24px 24px;
+  }
+
+  .spot-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scale(1.12);
+    z-index: 1;
   }
 
   .card-img-placeholder {
