@@ -1,0 +1,139 @@
+---
+import type { Product } from '../../lib/api';
+import ProductImageCard from './ProductImageCard.astro';
+
+interface Props {
+  products: Product[];
+}
+
+const { products } = Astro.props;
+// 1 grande + 6 pequeñas + 3 fila inferior = 10 productos
+const [large, ...tail] = products.slice(0, 10);
+const rest = tail.slice(0, 6);
+const bottom = tail.slice(6, 9);
+---
+
+{large && (
+  <section class="df-section">
+    <div class="df-header">
+      <h2 class="df-title">Darkflash</h2>
+      <a href="/productos?tag=darkflash" class="df-link">
+        Ver todos
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="df-grid">
+      <!-- Primera card ocupa las 2 filas -->
+      <div class="df-large">
+        <ProductImageCard product={large} />
+      </div>
+      {rest.map(p => <ProductImageCard product={p} />)}
+    </div>
+
+    {bottom.length > 0 && (
+      <div class="df-bottom">
+        {bottom.map(p => <ProductImageCard product={p} />)}
+      </div>
+    )}
+  </section>
+)}
+
+<style>
+  .df-section {
+    background: var(--bg-surface);
+    padding: 48px 0;
+  }
+
+  .df-header {
+    max-width: 1280px;
+    margin: 0 auto 24px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .df-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .df-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    transition: gap var(--transition);
+  }
+  .df-link:hover { gap: 10px; }
+
+  /* ── Grid ── */
+  .df-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(2, 260px);
+    gap: 10px;
+  }
+
+  /* La primera card abarca las 2 filas */
+  .df-large {
+    grid-row: span 2;
+  }
+  /* La card dentro del wrapper llena el alto */
+  .df-large > :global(.pic-card) {
+    height: 100%;
+  }
+
+  /* ── Fila inferior: 3 cards iguales ── */
+  .df-bottom {
+    max-width: 1280px;
+    margin: 10px auto 0;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 200px;
+    gap: 10px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .df-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: repeat(3, 220px);
+    }
+    .df-large {
+      grid-column: span 3;
+      grid-row: span 1;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .df-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 200px repeat(3, 160px);
+    }
+    .df-large {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+    .df-bottom {
+      grid-template-rows: 140px;
+      padding: 0 16px;
+      gap: 8px;
+    }
+    .df-section { padding: 32px 0; }
+    .df-header { margin-bottom: 16px; }
+    .df-grid { padding: 0 16px; gap: 8px; }
+  }
+</style>

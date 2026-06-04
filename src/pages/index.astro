@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Hero from '../components/hero/Hero.astro';
 import ProductSection from '../components/products/ProductSection.astro';
+import FeaturedSection from '../components/products/FeaturedSection.astro';
+import DarkflashGrid from '../components/products/DarkflashGrid.astro';
 import { getStorefrontProducts } from '../lib/api';
 
 const SECTION_LIMIT = 12;
@@ -17,23 +19,9 @@ const [featured, darkflash, refrigeracion] = await Promise.all([
 <Base title="Inicio">
   <Hero />
 
-  {featured.data.length > 0 && (
-    <ProductSection
-      title="Destacados"
-      viewAllHref="/productos?featured=true"
-      products={featured.data}
-      minimal={true}
-    />
-  )}
+  <FeaturedSection products={featured.data} />
 
-  {darkflash.data.length > 0 && (
-    <ProductSection
-      title="Darkflash"
-      viewAllHref="/productos?tag=darkflash"
-      products={darkflash.data}
-      alt={true}
-    />
-  )}
+  <DarkflashGrid products={darkflash.data} />
 
   {refrigeracion.data.length > 0 && (
     <ProductSection
