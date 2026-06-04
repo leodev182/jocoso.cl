@@ -44,6 +44,10 @@ button {
   scrollbar-width: thin;
 }
 
+/* El hidden attribute solo tiene display:none en la UA stylesheet sin !important,
+   cualquier display en author styles lo pisa (ej: display:flex en .state-msg) */
+[hidden] { display: none !important; }
+
 /* Utility */
 .neon-text   { text-shadow: var(--neon-text); color: var(--accent); }
 .neon-border { box-shadow: var(--neon-border); border: 1px solid var(--accent); }
