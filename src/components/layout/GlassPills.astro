@@ -1,0 +1,61 @@
+---
+---
+
+<section class="pills-section">
+  <div class="pills-inner">
+    <div class="pill">
+      <img src="/images/brand/corsair.svg" alt="Corsair" class="brand-logo brand-logo--lg" />
+    </div>
+    <div class="pill">
+      <img src="/images/brand/meetion.svg" alt="Meetion" class="brand-logo" />
+    </div>
+    <div class="pill">
+      <img src="/images/brand/darkflash.svg" alt="Darkflash" class="brand-logo" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .pills-section {
+    padding: 80px 0;
+  }
+
+  .pills-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .pill {
+    height: 90px;
+    border-radius: var(--radius-lg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    background: var(--glass-bg-alt);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+  }
+
+  .brand-logo {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: opacity var(--transition);
+  }
+  .pill:hover .brand-logo { opacity: 1; }
+  .brand-logo--lg { transform: scale(1.5); }
+
+  @media (max-width: 580px) {
+    .pills-inner { grid-template-columns: 1fr; gap: 12px; }
+    .pill { height: 70px; }
+    .pills-section { padding: 32px 0; }
+  }
+</style>

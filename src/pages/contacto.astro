@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import GameController from '../components/ui/GameController.astro';
+---
+
+<Base title="Contacto">
+  <div class="soon-wrap">
+    <div class="soon-scene">
+      <GameController size={520} />
+      <div class="soon-pill">Coming Soon</div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .soon-wrap {
+    min-height: calc(100dvh - var(--header-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* Grid trick: ambos hijos comparten la misma celda → se superponen centrados */
+  .soon-scene {
+    display: grid;
+    place-items: center;
+  }
+  .soon-scene > * { grid-area: 1 / 1; }
+
+  .soon-pill {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    padding: 18px 52px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 800;
+    color: var(--text);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (max-width: 600px) {
+    .soon-scene :global(svg) { width: 90vw !important; }
+    .soon-pill { font-size: 1rem; padding: 14px 32px; }
+  }
+</style>

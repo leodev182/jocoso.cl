@@ -1,6 +1,7 @@
 ---
 import Navbar from '../components/layout/Navbar.astro';
 import Footer from '../components/layout/Footer.astro';
+import LoadingScreen from '../components/ui/LoadingScreen.astro';
 
 interface Props {
   title: string;
@@ -26,6 +27,7 @@ const { title, description = 'Equipos gamers y periféricos al mejor precio — 
     </script>
   </head>
   <body>
+    <LoadingScreen />
     <!-- Fondo animado de luces difuminadas -->
     <div class="scene" aria-hidden="true">
       <div class="scene__blob scene__blob--1"></div>

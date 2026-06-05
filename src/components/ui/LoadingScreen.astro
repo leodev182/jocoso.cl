@@ -1,0 +1,53 @@
+---
+import GameController from './GameController.astro';
+---
+
+<div id="loading-screen" class="loader-overlay" aria-hidden="true">
+  <div class="loader-box">
+    <GameController size={200} />
+  </div>
+</div>
+
+<style>
+  .loader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    transition: opacity 0.5s ease;
+  }
+
+  .loader-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+</style>
+
+<script>
+  const loader = document.getElementById('loading-screen');
+  if (loader) {
+    const hide = () => {
+      loader.classList.add('fade-out');
+      setTimeout(() => { loader.hidden = true; }, 550);
+    };
+
+    if (document.readyState === 'complete') {
+      // ya cargó antes de que este script corriera
+      setTimeout(hide, 400);
+    } else {
+      window.addEventListener('load', () => setTimeout(hide, 400), { once: true });
+      // Fallback: máximo 5s por si algo falla
+      setTimeout(hide, 5000);
+    }
+  }
+</script>

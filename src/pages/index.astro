@@ -4,6 +4,7 @@ import Hero from '../components/hero/Hero.astro';
 import ProductSection from '../components/products/ProductSection.astro';
 import FeaturedSection from '../components/products/FeaturedSection.astro';
 import DarkflashGrid from '../components/products/DarkflashGrid.astro';
+import GlassPills from '../components/layout/GlassPills.astro';
 import { getStorefrontProducts } from '../lib/api';
 
 const SECTION_LIMIT = 12;
@@ -22,6 +23,8 @@ const [featured, darkflash, refrigeracion] = await Promise.all([
   <FeaturedSection products={featured.data} />
 
   <DarkflashGrid products={darkflash.data} />
+
+  <GlassPills />
 
   {refrigeracion.data.length > 0 && (
     <ProductSection

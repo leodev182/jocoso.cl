@@ -1,0 +1,123 @@
+---
+interface Props {
+  size?: number;
+}
+const { size = 220 } = Astro.props;
+---
+
+<svg
+  class="ctrl-svg"
+  width={size}
+  viewBox="0 0 260 185"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- ── Cuerpo principal — path continuo para el neon trace ── -->
+  <path
+    class="ctrl-body"
+    d="
+      M 82,42 L 62,42
+      C 44,42 30,52 24,68
+      L 17,92
+      C 13,107 14,122 20,136
+      L 29,152
+      C 35,164 49,171 63,169
+      L 83,167
+      C 95,165 104,157 111,146
+      L 117,136
+      L 143,136
+      L 149,146
+      C 156,157 165,165 177,167
+      L 197,169
+      C 211,171 225,164 231,152
+      L 240,136
+      C 246,122 247,107 243,92
+      L 236,68
+      C 230,52 216,42 198,42
+      L 178,42
+      C 173,34 165,29 157,29
+      L 103,29
+      C 95,29 87,34 82,42
+      Z
+    "
+    stroke="var(--accent)"
+    stroke-width="2"
+    stroke-linejoin="round"
+  />
+
+  <!-- Bumper izquierdo -->
+  <path
+    class="ctrl-detail"
+    d="M 64,42 C 56,33 47,28 40,30 C 33,32 26,39 24,47"
+    stroke="var(--accent)" stroke-width="2" stroke-linecap="round"
+  />
+
+  <!-- Bumper derecho -->
+  <path
+    class="ctrl-detail"
+    d="M 196,42 C 204,33 213,28 220,30 C 227,32 234,39 236,47"
+    stroke="var(--accent)" stroke-width="2" stroke-linecap="round"
+  />
+
+  <!-- D-pad horizontal -->
+  <rect class="ctrl-detail" x="57" y="90" width="32" height="11" rx="3"
+    stroke="var(--accent)" stroke-width="1.5"/>
+  <!-- D-pad vertical -->
+  <rect class="ctrl-detail" x="68" y="79" width="10" height="33" rx="3"
+    stroke="var(--accent)" stroke-width="1.5"/>
+
+  <!-- Analog stick izquierdo -->
+  <circle class="ctrl-detail" cx="88" cy="128" r="15"
+    stroke="var(--accent)" stroke-width="1.5"/>
+
+  <!-- Analog stick derecho -->
+  <circle class="ctrl-detail" cx="172" cy="128" r="15"
+    stroke="var(--accent)" stroke-width="1.5"/>
+
+  <!-- Botones de acción -->
+  <circle class="ctrl-detail" cx="185" cy="86" r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+  <circle class="ctrl-detail" cx="198" cy="73" r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+  <circle class="ctrl-detail" cx="198" cy="99" r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+  <circle class="ctrl-detail" cx="211" cy="86" r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+
+  <!-- Start / Select -->
+  <rect class="ctrl-detail" x="111" y="80" width="13" height="7" rx="3.5"
+    stroke="var(--accent)" stroke-width="1.5"/>
+  <rect class="ctrl-detail" x="136" y="80" width="13" height="7" rx="3.5"
+    stroke="var(--accent)" stroke-width="1.5"/>
+
+  <!-- Botón home central -->
+  <circle class="ctrl-detail" cx="130" cy="104" r="9"
+    stroke="var(--accent)" stroke-width="1.5"/>
+</svg>
+
+<style>
+  .ctrl-svg { display: block; overflow: visible; }
+
+  /* Luz neon que recorre el cuerpo */
+  .ctrl-body {
+    stroke-dasharray: 60 900;
+    stroke-dashoffset: 960;
+    animation: neon-trace 3s linear infinite;
+    filter:
+      drop-shadow(0 0 4px var(--accent))
+      drop-shadow(0 0 12px var(--accent-mid))
+      drop-shadow(0 0 24px var(--accent-glow));
+  }
+
+  @keyframes neon-trace {
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Detalles: pulso suave */
+  .ctrl-detail {
+    opacity: 0.45;
+    animation: ctrl-pulse 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 3px var(--accent));
+  }
+
+  @keyframes ctrl-pulse {
+    0%, 100% { opacity: 0.35; }
+    50%       { opacity: 0.85; }
+  }
+</style>
