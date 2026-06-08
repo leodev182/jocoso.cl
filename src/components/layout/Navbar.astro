@@ -127,6 +127,29 @@ const navLinks = [
           <a href={link.href} class="cat-tag">{link.label}</a>
         ))}
       </nav>
+
+      <!-- Redes sociales al final del subnavbar -->
+      <div class="social-links">
+        <a href="https://www.facebook.com/marketplace/profile/1012281954/?ref=permalink&mibextid=dXMIcH"
+           class="social-link" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/jocoso83"
+           class="social-link" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </a>
+        <a href="https://listado.mercadolibre.cl/_CustId_468900091"
+           class="social-link" target="_blank" rel="noopener" aria-label="MercadoLibre"
+           style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.3px;">
+          Mercado Libre
+        </a>
+      </div>
     </div>
   </div>
 
@@ -228,6 +251,22 @@ const navLinks = [
     align-items: center;
     gap: 2px;
   }
+
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    padding-left: 16px;
+  }
+
+  .social-link {
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    transition: color var(--transition);
+  }
+  .social-link:hover { color: var(--accent); }
 
   .icon-btn {
     display: flex;

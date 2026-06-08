@@ -85,6 +85,14 @@ export async function getStorefrontProducts(params: {
   return result ?? { data: [], total: 0, page: 1, limit: 12, totalPages: 0 };
 }
 
+// Busca un producto por slug o id. Intenta endpoint directo primero; si no existe, busca en la lista.
+export async function getProductBySlug(slugOrId: string): Promise<Product | null> {
+  const direct = await get<Product>(`/products/storefront/${encodeURIComponent(slugOrId)}`);
+  if (direct) return direct;
+  const result = await get<Paginated<Product>>(`/products/storefront?limit=100`);
+  return result?.data.find((p) => p.slug === slugOrId || p.id === slugOrId) ?? null;
+}
+
 // Trae TODOS los productos paginando (el backend topa el limit en 100)
 export async function getAllStorefrontProducts(params: {
   featured?: boolean;

@@ -1,5 +1,6 @@
 ---
 import Button from '../ui/Button.astro';
+import HeroCarousel from './HeroCarousel.astro';
 ---
 
 <!-- hero-section da el fondo full-width; hero limita el ancho del contenido -->
@@ -24,6 +25,9 @@ import Button from '../ui/Button.astro';
       </div>
     </div>
 
+    <div class="hero-visual">
+      <HeroCarousel size={300} />
+    </div>
   </div>
 </section>
 
@@ -52,6 +56,9 @@ import Button from '../ui/Button.astro';
     width: 100%;
   }
 
+  /* oculto en mobile, se muestra en desktop */
+  .hero-visual { display: none; }
+
   /* Desktop */
   @media (min-width: 769px) {
     .hero-section {
@@ -59,6 +66,7 @@ import Button from '../ui/Button.astro';
       padding: 48px 0;
     }
     .hero {
+      flex-direction: row;
       align-items: center;
       text-align: left;
       gap: 64px;
@@ -67,6 +75,12 @@ import Button from '../ui/Button.astro';
     .hero-badge  { align-self: auto; }
     .hero-sub    { max-width: 520px; }
     .hero-ctas   { justify-content: flex-start; }
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
   }
 
   .hero-content {

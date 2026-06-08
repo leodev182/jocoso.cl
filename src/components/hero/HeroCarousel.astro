@@ -1,0 +1,345 @@
+---
+interface Props {
+  size?: number;
+}
+const { size = 300 } = Astro.props;
+---
+
+<div class="hc-wrap" id="hc-wrap" style={`width:${size}px;height:${size}px`}>
+
+  <!-- ── 1. Silla gaming — respaldo alto + base 5 estrellas ── -->
+  <svg class="hc-obj hc-active" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1000" class="hc-body"
+      d="M 122,12 L 158,12 Q 168,12 170,22
+         L 170,40 Q 170,48 164,52
+         L 180,58 Q 190,62 192,74 L 192,122
+         L 212,126 Q 228,126 230,138
+         L 230,154 Q 228,164 212,164 L 192,164
+         L 192,176 Q 192,188 180,188 L 152,188
+         L 152,204 L 128,204 L 128,188
+         L 100,188 Q 88,188 88,176 L 88,164
+         L 68,164 Q 52,164 50,154
+         L 50,138 Q 52,126 68,126 L 88,122
+         L 88,74 Q 90,62 100,58
+         L 116,52 Q 110,48 110,40
+         L 110,22 Q 112,12 122,12 Z"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- headrest cushion -->
+    <rect class="hc-detail" x="118" y="18" width="44" height="28" rx="8" stroke="var(--accent)" stroke-width="1.2"/>
+    <!-- backrest stitching -->
+    <line class="hc-detail" x1="106" y1="76"  x2="174" y2="76"  stroke="var(--accent)" stroke-width="1"/>
+    <line class="hc-detail" x1="106" y1="100" x2="174" y2="100" stroke="var(--accent)" stroke-width="1"/>
+    <line class="hc-detail" x1="106" y1="124" x2="174" y2="124" stroke="var(--accent)" stroke-width="1"/>
+    <!-- seat cushion arc -->
+    <path class="hc-detail" d="M 96,180 Q 140,188 184,180" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- center column -->
+    <line class="hc-detail" x1="140" y1="204" x2="140" y2="228" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+    <!-- 5-star base arms -->
+    <line class="hc-detail" x1="140" y1="228" x2="180" y2="218" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <line class="hc-detail" x1="140" y1="228" x2="172" y2="258" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <line class="hc-detail" x1="140" y1="228" x2="140" y2="266" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <line class="hc-detail" x1="140" y1="228" x2="108" y2="258" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <line class="hc-detail" x1="140" y1="228" x2="100" y2="218" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <!-- casters / ruedas -->
+    <circle class="hc-detail" cx="180" cy="218" r="5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="172" cy="258" r="5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="140" cy="266" r="5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="108" cy="258" r="5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="100" cy="218" r="5" stroke="var(--accent)" stroke-width="1.5"/>
+  </svg>
+
+  <!-- ── 2. Auriculares gaming — copas redondas + diadema pronunciada ── -->
+  <svg class="hc-obj" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!--
+      Copa izq: centro (66,172) rx=42 ry=54  top=118 bot=226
+      Copa der: centro (214,172) rx=42 ry=54 top=118 bot=226
+      sweep=0 (CCW): lado OESTE copa baja → lado ESTE copa sube
+      sweep=1 (CW):  lado ESTE copa der baja → lado OESTE copa der sube
+    -->
+    <path pathLength="1000" class="hc-body"
+      d="M 66,118
+         A 42,54 0 0 0 66,226
+         A 42,54 0 0 0 66,118
+         Q 66,48 140,38
+         Q 214,48 214,118
+         A 42,54 0 0 1 214,226
+         A 42,54 0 0 1 214,118"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- left cushion ring -->
+    <ellipse class="hc-detail" cx="66"  cy="172" rx="28" ry="36" stroke="var(--accent)" stroke-width="1.5"/>
+    <!-- left driver -->
+    <circle  class="hc-detail" cx="66"  cy="172" r="14"  stroke="var(--accent)" stroke-width="1.2"/>
+    <!-- right cushion ring -->
+    <ellipse class="hc-detail" cx="214" cy="172" rx="28" ry="36" stroke="var(--accent)" stroke-width="1.5"/>
+    <!-- right driver -->
+    <circle  class="hc-detail" cx="214" cy="172" r="14"  stroke="var(--accent)" stroke-width="1.2"/>
+    <!-- headband cushion pad (thick stroke = acolchado visible) -->
+    <path class="hc-detail" d="M 98,72 Q 140,60 182,72" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>
+    <!-- slider adjusters (tira de ajuste a ambos lados) -->
+    <line class="hc-detail" x1="84"  y1="68" x2="84"  y2="92" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+    <line class="hc-detail" x1="196" y1="68" x2="196" y2="92" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+    <!-- mic boom arm -->
+    <path class="hc-detail" d="M 24,200 Q 6,222 2,250" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+    <!-- mic capsule -->
+    <rect class="hc-detail" x="-4" y="250" width="20" height="10" rx="5" stroke="var(--accent)" stroke-width="1.5"/>
+  </svg>
+
+  <!-- ── 3. Teclado gaming — teclas individuales ── -->
+  <svg class="hc-obj" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1000" class="hc-body"
+      d="M 14,88 Q 14,80 20,80 L 260,80
+         Q 266,80 266,88 L 266,200
+         Q 266,208 260,208 L 20,208
+         Q 14,208 14,200 Z"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- fila 1: 13 teclas pequeñas (número/función) -->
+    <rect class="hc-detail" x="22"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="41"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="60"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="79"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="98"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="117" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="136" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="155" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="174" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="193" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="212" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="231" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="250" y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <!-- fila 2: 10 teclas letras -->
+    <rect class="hc-detail" x="22"  y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="46"  y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="70"  y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="94"  y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="118" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="142" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="166" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="190" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="214" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="238" y="108" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <!-- fila 3 (escalonada): 10 teclas -->
+    <rect class="hc-detail" x="26"  y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="50"  y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="74"  y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="98"  y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="122" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="146" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="170" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="194" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="218" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="242" y="133" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <!-- fila 4: 10 teclas -->
+    <rect class="hc-detail" x="22"  y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="46"  y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="70"  y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="94"  y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="118" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="142" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="166" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="190" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="214" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="238" y="158" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <!-- fila inferior: modificadores + barra espaciadora -->
+    <rect class="hc-detail" x="22"  y="183" width="24" height="17" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="50"  y="183" width="20" height="17" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="74"  y="183" width="130" height="17" rx="4" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect class="hc-detail" x="208" y="183" width="20" height="17" rx="3" stroke="var(--accent)" stroke-width="1"/>
+    <rect class="hc-detail" x="232" y="183" width="24" height="17" rx="3" stroke="var(--accent)" stroke-width="1"/>
+  </svg>
+
+  <!-- ── 4. Mando (no tocar — está perfecto) ── -->
+  <svg class="hc-obj" viewBox="0 0 260 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1000" class="hc-body"
+      d="M 82,42 L 62,42 C 44,42 30,52 24,68 L 17,92
+         C 13,107 14,122 20,136 L 29,152
+         C 35,164 49,171 63,169 L 83,167
+         C 95,165 104,157 111,146 L 117,136
+         L 143,136 L 149,146
+         C 156,157 165,165 177,167 L 197,169
+         C 211,171 225,164 231,152 L 240,136
+         C 246,122 247,107 243,92 L 236,68
+         C 230,52 216,42 198,42 L 178,42
+         C 173,34 165,29 157,29 L 103,29
+         C 95,29 87,34 82,42 Z"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <path class="hc-detail" d="M 64,42 C 56,33 47,28 40,30 C 33,32 26,39 24,47" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="hc-detail" d="M 196,42 C 204,33 213,28 220,30 C 227,32 234,39 236,47" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+    <rect class="hc-detail" x="57" y="90" width="32" height="11" rx="3" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect class="hc-detail" x="68" y="79" width="10" height="33" rx="3" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="88"  cy="128" r="15" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="172" cy="128" r="15" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="185" cy="86"  r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="198" cy="73"  r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="198" cy="99"  r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="211" cy="86"  r="6.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect class="hc-detail" x="111" y="80" width="13" height="7" rx="3.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect class="hc-detail" x="136" y="80" width="13" height="7" rx="3.5" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="130" cy="104" r="9" stroke="var(--accent)" stroke-width="1.5"/>
+  </svg>
+
+  <!-- ── 5. Gabinete gaming — dos grandes ventiladores frontales ── -->
+  <svg class="hc-obj" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1000" class="hc-body"
+      d="M 30,30 Q 30,16 44,12 L 160,12
+         Q 170,12 170,22 L 170,278
+         Q 170,286 162,286 L 38,286
+         Q 30,286 30,278 Z"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- power button -->
+    <circle class="hc-detail" cx="52"  cy="34" r="11" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="52"  cy="34" r="5"  stroke="var(--accent)" stroke-width="1"/>
+    <!-- LED strip top -->
+    <path class="hc-detail" d="M 78,22 L 152,22" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Ventilador 1 (superior) — anillos concentricos + aspa -->
+    <circle class="hc-detail" cx="100" cy="92"  r="40" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="100" cy="92"  r="28" stroke="var(--accent)" stroke-width="1"/>
+    <circle class="hc-detail" cx="100" cy="92"  r="14" stroke="var(--accent)" stroke-width="1.2"/>
+    <line   class="hc-detail" x1="100" y1="52"  x2="100" y2="132" stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="60"  y1="92"  x2="140" y2="92"  stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="72"  y1="64"  x2="128" y2="120" stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="128" y1="64"  x2="72"  y2="120" stroke="var(--accent)" stroke-width="0.8"/>
+    <!-- Ventilador 2 (inferior) — mismo patrón -->
+    <circle class="hc-detail" cx="100" cy="192" r="40" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="100" cy="192" r="28" stroke="var(--accent)" stroke-width="1"/>
+    <circle class="hc-detail" cx="100" cy="192" r="14" stroke="var(--accent)" stroke-width="1.2"/>
+    <line   class="hc-detail" x1="100" y1="152" x2="100" y2="232" stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="60"  y1="192" x2="140" y2="192" stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="72"  y1="164" x2="128" y2="220" stroke="var(--accent)" stroke-width="0.8"/>
+    <line   class="hc-detail" x1="128" y1="164" x2="72"  y2="220" stroke="var(--accent)" stroke-width="0.8"/>
+    <!-- puertos USB (entre ventiladores) -->
+    <rect class="hc-detail" x="36" y="142" width="26" height="12" rx="3" stroke="var(--accent)" stroke-width="1.2"/>
+    <rect class="hc-detail" x="36" y="158" width="26" height="12" rx="3" stroke="var(--accent)" stroke-width="1.2"/>
+    <!-- mesh inferior -->
+    <rect class="hc-detail" x="36" y="244" width="128" height="32" rx="4" stroke="var(--accent)" stroke-width="1"/>
+    <line class="hc-detail" x1="44" y1="254" x2="156" y2="254" stroke="var(--accent)" stroke-width="0.8"/>
+    <line class="hc-detail" x1="44" y1="264" x2="156" y2="264" stroke="var(--accent)" stroke-width="0.8"/>
+  </svg>
+
+  <!-- ── 6. Monitor gaming ── -->
+  <svg class="hc-obj" viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1000" class="hc-body"
+      d="M 20,18 Q 20,10 28,10 L 272,10
+         Q 280,10 280,18 L 280,178
+         Q 280,186 272,186 L 28,186
+         Q 20,186 20,178 Z"
+      stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
+    <!-- screen bezel -->
+    <rect class="hc-detail" x="28" y="18" width="244" height="160" rx="3" stroke="var(--accent)" stroke-width="1.2"/>
+    <!-- glare -->
+    <line class="hc-detail" x1="36" y1="26" x2="72" y2="26" stroke="var(--accent)" stroke-width="1"   stroke-linecap="round"/>
+    <line class="hc-detail" x1="36" y1="33" x2="56" y2="33" stroke="var(--accent)" stroke-width="0.8" stroke-linecap="round"/>
+    <!-- OSD buttons -->
+    <circle class="hc-detail" cx="150" cy="182" r="3" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="162" cy="182" r="3" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle class="hc-detail" cx="174" cy="182" r="3" stroke="var(--accent)" stroke-width="1.5"/>
+    <!-- neck -->
+    <path class="hc-detail" d="M 130,186 L 126,214 L 174,214 L 170,186" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- base -->
+    <path class="hc-detail"
+      d="M 92,214 Q 92,224 100,224 L 200,224 Q 208,224 208,214
+         L 208,212 Q 208,206 200,206 L 100,206 Q 92,206 92,212 Z"
+      stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>
+
+</div>
+
+<style>
+  .hc-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .hc-obj {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; height: 100%;
+    opacity: 0;
+    overflow: visible;
+  }
+
+  .hc-obj.hc-active { opacity: 1; }
+
+  /* ── Disapparate / Apparate ── */
+  .hc-obj.hc-leaving {
+    animation: hp-vanish 1.3s ease-in forwards;
+  }
+  .hc-obj.hc-entering {
+    animation: hp-appear 1.5s ease-out forwards;
+  }
+
+  @keyframes hp-vanish {
+    0%   { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotate(0deg)  ; filter: blur(0px); }
+    25%  {              transform: translate(-50%,-50%) scale(1.04) rotate(2deg)  ; filter: blur(1px); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(0.82) rotate(-8deg) ; filter: blur(24px); }
+  }
+  @keyframes hp-appear {
+    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.82) rotate(8deg)  ; filter: blur(24px); }
+    55%  { opacity: 0.9; transform: translate(-50%,-50%) scale(1.02) rotate(-1deg); filter: blur(2px); }
+    100% { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotate(0deg)  ; filter: blur(0px); }
+  }
+
+  /* ── Luz neon — 3.5s por vuelta (más rápido) ── */
+  .hc-body {
+    stroke-dasharray: 45 955;
+    stroke-dashoffset: 1000;
+    animation: hc-trace 3.5s linear infinite;
+    filter:
+      drop-shadow(0 0 5px var(--accent))
+      drop-shadow(0 0 14px var(--accent-mid))
+      drop-shadow(0 0 30px var(--accent-glow));
+  }
+  @keyframes hc-trace {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  /* Detalles interiores: pulso suave */
+  .hc-detail {
+    fill: none;
+    opacity: 0;
+    animation: hc-pulse 2.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 3px var(--accent));
+  }
+  @keyframes hc-pulse {
+    0%, 100% { opacity: 0.2; }
+    50%       { opacity: 0.7; }
+  }
+
+  @media (max-width: 900px) {
+    .hc-wrap { width: 240px !important; height: 240px !important; }
+  }
+</style>
+
+<script>
+  const DISPLAY   = 10000;
+  const OUT_TIME  = 1300;
+  const IN_OFFSET = 650;
+
+  const objs = Array.from(document.querySelectorAll<HTMLElement>('.hc-obj'));
+
+  if (objs.length > 1) {
+    let cur = 0;
+
+    function cycle() {
+      const leaving  = objs[cur];
+      const nextIdx  = (cur + 1) % objs.length;
+      const entering = objs[nextIdx];
+
+      leaving.classList.remove('hc-active');
+      leaving.classList.add('hc-leaving');
+
+      setTimeout(() => { entering.classList.add('hc-entering'); }, IN_OFFSET);
+
+      setTimeout(() => {
+        leaving.classList.remove('hc-leaving');
+        entering.classList.remove('hc-entering');
+        entering.classList.add('hc-active');
+        cur = nextIdx;
+        setTimeout(cycle, DISPLAY);
+      }, OUT_TIME + 200);
+    }
+
+    setTimeout(cycle, DISPLAY);
+  }
+</script>
