@@ -21,7 +21,7 @@ const firstVariant = product.variants[0];
 ---
 
 <div
-  class="product-card"
+  class:list={["product-card", { "product-card--no-stock": stock === 0 }]}
   data-product-id={product.id}
   data-variant-id={firstVariant?.id ?? ''}
   data-nombre={product.title}
@@ -126,9 +126,21 @@ const firstVariant = product.variants[0];
     height: 100%;
     object-fit: contain;
     padding: 14px;
-    transition: transform 300ms ease;
+    transition: transform 300ms ease, filter 300ms ease, opacity 300ms ease;
   }
   .product-card:hover .card-image img { transform: scale(1.06); }
+
+  /* Sin stock */
+  .product-card--no-stock .card-image img {
+    filter: blur(3px) grayscale(0.4);
+    opacity: 0.55;
+  }
+  .product-card--no-stock:hover .card-image img {
+    filter: blur(3px) grayscale(0.4);
+    opacity: 0.55;
+    transform: none;
+  }
+  .product-card--no-stock .btn-add-cart { display: none; }
 
   .card-no-image {
     width: 100%;
