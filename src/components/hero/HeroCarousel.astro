@@ -10,19 +10,19 @@ const { size = 300 } = Astro.props;
   <!-- ── 1. Silla gaming — respaldo alto + base 5 estrellas ── -->
   <svg class="hc-obj hc-active" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path pathLength="1000" class="hc-body"
-      d="M 122,12 L 158,12 Q 168,12 170,22
-         L 170,40 Q 170,48 164,52
-         L 180,58 Q 190,62 192,74 L 192,122
-         L 212,126 Q 228,126 230,138
-         L 230,154 Q 228,164 212,164 L 192,164
-         L 192,176 Q 192,188 180,188 L 152,188
-         L 152,204 L 128,204 L 128,188
-         L 100,188 Q 88,188 88,176 L 88,164
-         L 68,164 Q 52,164 50,154
-         L 50,138 Q 52,126 68,126 L 88,122
-         L 88,74 Q 90,62 100,58
-         L 116,52 Q 110,48 110,40
-         L 110,22 Q 112,12 122,12 Z"
+      d="M 122,12 Q 112,12 110,22
+         L 110,40 Q 110,48 116,52
+         L 100,58 Q 90,62 88,74
+         L 88,122 L 68,126 Q 52,126 50,138
+         L 50,154 Q 52,164 68,164 L 88,164
+         L 88,176 Q 88,188 100,188
+         L 128,188 L 128,204 L 152,204 L 152,188
+         L 180,188 Q 192,188 192,176 L 192,164
+         L 212,164 Q 228,164 230,154
+         L 230,138 Q 228,126 212,126 L 192,122
+         L 192,74 Q 190,62 180,58
+         L 164,52 Q 170,48 170,40
+         L 170,22 Q 168,12 158,12 Z"
       stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
     <!-- headrest cushion -->
     <rect class="hc-detail" x="118" y="18" width="44" height="28" rx="8" stroke="var(--accent)" stroke-width="1.2"/>
@@ -57,13 +57,13 @@ const { size = 300 } = Astro.props;
       sweep=1 (CW):  lado ESTE copa der baja → lado OESTE copa der sube
     -->
     <path pathLength="1000" class="hc-body"
-      d="M 66,118
-         A 42,54 0 0 0 66,226
-         A 42,54 0 0 0 66,118
-         Q 66,48 140,38
-         Q 214,48 214,118
-         A 42,54 0 0 1 214,226
-         A 42,54 0 0 1 214,118"
+      d="M 214,118
+         A 42,54 0 0 0 214,226
+         A 42,54 0 0 0 214,118
+         Q 214,48 140,38
+         Q 66,48 66,118
+         A 42,54 0 0 1 66,226
+         A 42,54 0 0 1 66,118"
       stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
     <!-- left cushion ring -->
     <ellipse class="hc-detail" cx="66"  cy="172" rx="28" ry="36" stroke="var(--accent)" stroke-width="1.5"/>
@@ -87,10 +87,11 @@ const { size = 300 } = Astro.props;
   <!-- ── 3. Teclado gaming — teclas individuales ── -->
   <svg class="hc-obj" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path pathLength="1000" class="hc-body"
-      d="M 14,88 Q 14,80 20,80 L 260,80
-         Q 266,80 266,88 L 266,200
-         Q 266,208 260,208 L 20,208
-         Q 14,208 14,200 Z"
+      d="M 14,88 L 14,200
+         Q 14,208 20,208 L 260,208
+         Q 266,208 266,200 L 266,88
+         Q 266,80 260,80 L 20,80
+         Q 14,80 14,88 Z"
       stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
     <!-- fila 1: 13 teclas pequeñas (número/función) -->
     <rect class="hc-detail" x="22"  y="88"  width="15" height="16" rx="3" stroke="var(--accent)" stroke-width="1"/>
@@ -180,10 +181,11 @@ const { size = 300 } = Astro.props;
   <!-- ── 5. Gabinete gaming — dos grandes ventiladores frontales ── -->
   <svg class="hc-obj" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path pathLength="1000" class="hc-body"
-      d="M 30,30 Q 30,16 44,12 L 160,12
-         Q 170,12 170,22 L 170,278
-         Q 170,286 162,286 L 38,286
-         Q 30,286 30,278 Z"
+      d="M 30,30 L 30,278
+         Q 30,286 38,286 L 162,286
+         Q 170,286 170,278 L 170,22
+         Q 170,12 160,12 L 44,12
+         Q 30,16 30,30 Z"
       stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
     <!-- power button -->
     <circle class="hc-detail" cx="52"  cy="34" r="11" stroke="var(--accent)" stroke-width="1.5"/>
@@ -218,10 +220,11 @@ const { size = 300 } = Astro.props;
   <!-- ── 6. Monitor gaming ── -->
   <svg class="hc-obj" viewBox="0 0 300 240" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path pathLength="1000" class="hc-body"
-      d="M 20,18 Q 20,10 28,10 L 272,10
-         Q 280,10 280,18 L 280,178
-         Q 280,186 272,186 L 28,186
-         Q 20,186 20,178 Z"
+      d="M 20,18 L 20,178
+         Q 20,186 28,186 L 272,186
+         Q 280,186 280,178 L 280,18
+         Q 280,10 272,10 L 28,10
+         Q 20,10 20,18 Z"
       stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
     <!-- screen bezel -->
     <rect class="hc-detail" x="28" y="18" width="244" height="160" rx="3" stroke="var(--accent)" stroke-width="1.2"/>
@@ -260,30 +263,30 @@ const { size = 300 } = Astro.props;
 
   .hc-obj.hc-active { opacity: 1; }
 
-  /* ── Disapparate / Apparate ── */
+  /* ── Steam in / out ── */
   .hc-obj.hc-leaving {
-    animation: hp-vanish 1.3s ease-in forwards;
+    animation: steam-out 1.2s cubic-bezier(.22,.61,.36,1) forwards;
   }
   .hc-obj.hc-entering {
-    animation: hp-appear 1.5s ease-out forwards;
+    animation: steam-in 1.2s cubic-bezier(.22,.61,.36,1) forwards;
   }
 
-  @keyframes hp-vanish {
-    0%   { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotate(0deg)  ; filter: blur(0px); }
-    25%  {              transform: translate(-50%,-50%) scale(1.04) rotate(2deg)  ; filter: blur(1px); }
-    100% { opacity: 0; transform: translate(-50%,-50%) scale(0.82) rotate(-8deg) ; filter: blur(24px); }
+  @keyframes steam-out {
+    0%   { opacity: 1; transform: translate(-50%,-50%) rotate(0deg)   scale(1);    filter: blur(0); }
+    40%  { opacity: 1; transform: translate(-50%,-50%) rotate(60deg)  scale(1.1);  }
+    100% { opacity: 0; transform: translate(-50%,-50%) rotate(180deg) scale(0.25); filter: blur(20px); }
   }
-  @keyframes hp-appear {
-    0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.82) rotate(8deg)  ; filter: blur(24px); }
-    55%  { opacity: 0.9; transform: translate(-50%,-50%) scale(1.02) rotate(-1deg); filter: blur(2px); }
-    100% { opacity: 1; transform: translate(-50%,-50%) scale(1)    rotate(0deg)  ; filter: blur(0px); }
+  @keyframes steam-in {
+    0%   { opacity: 0; transform: translate(-50%,-50%) rotate(-180deg) scale(0.25); filter: blur(20px); }
+    60%  { opacity: 1; transform: translate(-50%,-50%) rotate(20deg)   scale(1.08); filter: blur(4px); }
+    100% { opacity: 1; transform: translate(-50%,-50%) rotate(0deg)    scale(1);    filter: blur(0); }
   }
 
-  /* ── Luz neon — 3.5s por vuelta (más rápido) ── */
+  /* ── Luz neon — traza continua en idle, draw/erase en transición ── */
   .hc-body {
     stroke-dasharray: 45 955;
     stroke-dashoffset: 1000;
-    animation: hc-trace 3.5s linear infinite;
+    animation: hc-trace 2s linear infinite;
     filter:
       drop-shadow(0 0 5px var(--accent))
       drop-shadow(0 0 14px var(--accent-mid))
@@ -292,6 +295,22 @@ const { size = 300 } = Astro.props;
   @keyframes hc-trace {
     from { stroke-dashoffset: 1000; }
     to   { stroke-dashoffset: 0; }
+  }
+
+  .hc-leaving .hc-body {
+    animation: erase 1.2s linear forwards;
+  }
+  .hc-entering .hc-body {
+    animation: draw 1.2s linear forwards;
+  }
+
+  @keyframes erase {
+    from { stroke-dashoffset: 0;    opacity: 1; }
+    to   { stroke-dashoffset: 1000; opacity: 0; }
+  }
+  @keyframes draw {
+    from { stroke-dashoffset: 1000; opacity: 0; }
+    to   { stroke-dashoffset: 0;    opacity: 1; }
   }
 
   /* Detalles interiores: pulso suave */
@@ -312,9 +331,9 @@ const { size = 300 } = Astro.props;
 </style>
 
 <script>
-  const DISPLAY   = 10000;
+  const DISPLAY   = 4000;
   const OUT_TIME  = 1300;
-  const IN_OFFSET = 650;
+  const IN_OFFSET = 400;
 
   const objs = Array.from(document.querySelectorAll<HTMLElement>('.hc-obj'));
 
