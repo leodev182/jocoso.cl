@@ -1,0 +1,288 @@
+---
+export const prerender = false;
+import Base from '../layouts/Base.astro';
+import { getConcursos } from '../lib/api';
+
+const todos = await getConcursos();
+const activos   = todos.filter(c => c.estado === 'ACTIVE');
+const historial = todos.filter(c => c.estado === 'FINISHED').slice(0, 5);
+
+const fmt = (n: number) => `$ ${n.toLocaleString('es-CL')}`;
+const fmtDate = (d: string) => new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
+---
+
+<Base title="Concursos" description="Participa en los concursos de jocoso.cl comprando tus productos favoritos.">
+  <section class="concursos">
+
+    <div class="concursos__head">
+      <h1>Concursos</h1>
+      <button class="btn-refresh" id="btn-refresh">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+        Actualizar
+      </button>
+    </div>
+
+    <!-- ── Activos ──────────────────────────────────────────────────────── -->
+    {activos.length > 0 ? (
+      <div class="concursos__section">
+        <h2 class="concursos__section-title">Concursos activos</h2>
+        <div class="concursos__grid">
+          {activos.map(c => (
+            <article class="concurso-card concurso-card--active">
+              {c.imagenPromoUrl && (
+                <div class="concurso-card__banner">
+                  <img src={c.imagenPromoUrl} alt={c.titulo} />
+                </div>
+              )}
+              <div class="concurso-card__body">
+                <span class="badge badge--active">Activo</span>
+                <h3>{c.titulo}</h3>
+                <ul class="concurso-card__conditions">
+                  <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Compra mínima de <strong>{fmt(c.montoMinimo)}</strong>
+                  </li>
+                  <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    Válido desde el <strong>{fmtDate(c.fechaDesde)}</strong>
+                  </li>
+                  {c.fechaHasta && (
+                    <li>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                      Hasta el <strong>{fmtDate(c.fechaHasta)}</strong>
+                    </li>
+                  )}
+                  {c.permiteMultiplesParticipaciones && (
+                    <li>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      Cada compra válida suma un ticket extra
+                    </li>
+                  )}
+                </ul>
+                <div class="concurso-card__links">
+                  <a href={`${import.meta.env.PUBLIC_API_URL ?? 'https://backend.jocoso.cl'}/api/v1/concursos/${c.id}/reglas`} target="_blank" rel="noopener">Ver bases del concurso ↗</a>
+                  <a href={`${import.meta.env.PUBLIC_API_URL ?? 'https://backend.jocoso.cl'}/api/v1/concursos/${c.id}/legales`} target="_blank" rel="noopener">Términos legales ↗</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="concursos__empty">
+        <p>No hay concursos activos en este momento. ¡Vuelve pronto!</p>
+      </div>
+    )}
+
+    <!-- ── Historial ─────────────────────────────────────────────────────── -->
+    {historial.length > 0 && (
+      <div class="concursos__section">
+        <h2 class="concursos__section-title">Historial</h2>
+        <div class="concursos__grid concursos__grid--history">
+          {historial.map(c => (
+            <article class="concurso-card concurso-card--finished">
+              {c.imagenPromoUrl && (
+                <div class="concurso-card__banner concurso-card__banner--dim">
+                  <img src={c.imagenPromoUrl} alt={c.titulo} />
+                </div>
+              )}
+              <div class="concurso-card__body">
+                <span class="badge badge--finished">Finalizado</span>
+                <h3>{c.titulo}</h3>
+                {c.resultadoVisible && (
+                  <div class="concurso-card__winner">
+                    <span class="winner-icon">{c.ganadorFallbackNombre ? '🎭' : '🏆'}</span>
+                    <div>
+                      <p class="winner-label">Ganador</p>
+                      <p class="winner-name">
+                        {c.ganadorFallbackNombre ?? '¡Ya tenemos un ganador!'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <p class="concurso-card__meta">
+                  {fmtDate(c.fechaDesde)}{c.fechaHasta ? ` — ${fmtDate(c.fechaHasta)}` : ''}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    )}
+
+  </section>
+</Base>
+
+<style>
+  .concursos {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+  }
+
+  .concursos__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+  }
+
+  .btn-refresh {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem 1rem;
+    border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--text-muted);
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+
+    &:hover { border-color: var(--accent); color: var(--accent); }
+  }
+
+  .concursos__section { margin-bottom: 3rem; }
+
+  .concursos__section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+    padding-bottom: .625rem;
+  }
+
+  .concursos__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+
+    &--history { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  }
+
+  .concursos__empty {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
+
+  /* ── Card ── */
+  .concurso-card {
+    background: var(--bg-surface);
+    border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: box-shadow .2s;
+
+    &--active { border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+    &--active:hover { box-shadow: 0 0 0 1px var(--accent), var(--neon-subtle); }
+  }
+
+  .concurso-card__banner {
+    width: 100%;
+    aspect-ratio: 16/7;
+    overflow: hidden;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+
+    &--dim img { opacity: .55; filter: grayscale(30%); }
+  }
+
+  .concurso-card__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+
+    h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  }
+
+  .concurso-card__conditions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .875rem;
+      color: var(--text-muted);
+
+      svg { flex-shrink: 0; color: var(--accent); }
+      strong { color: var(--text); }
+    }
+  }
+
+  .concurso-card__links {
+    display: flex;
+    gap: 1rem;
+    margin-top: .25rem;
+
+    a {
+      font-size: .8125rem;
+      color: var(--accent);
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+  }
+
+  /* ── Winner ── */
+  .concurso-card__winner {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+    background: color-mix(in srgb, #f59e0b 10%, transparent);
+    border: 1px solid color-mix(in srgb, #f59e0b 30%, transparent);
+    border-radius: var(--radius-md);
+    padding: .875rem 1rem;
+  }
+
+  .winner-icon { font-size: 1.5rem; }
+  .winner-label { font-size: .75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+  .winner-name { font-size: .9375rem; font-weight: 700; color: var(--text); }
+
+  .concurso-card__meta { font-size: .8rem; color: var(--text-muted); }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-block;
+    padding: .2rem .7rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    align-self: flex-start;
+
+    &--active   { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+    &--finished { background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text-muted); border: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+  }
+
+  @media (max-width: 600px) {
+    .concursos__grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  document.getElementById('btn-refresh')?.addEventListener('click', () => {
+    window.location.reload();
+  });
+</script>

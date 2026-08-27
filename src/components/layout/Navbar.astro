@@ -5,8 +5,9 @@ import { getStorefrontTags, isMainTag } from '../../lib/api';
 const categories = (await getStorefrontTags()).filter(isMainTag);
 
 const navLinks = [
-  { label: 'Catálogo',   href: '/productos' },
-  { label: 'Contacto',   href: '/contacto' },
+  { label: 'Catálogo',   href: '/productos'  },
+  { label: 'Concursos',  href: '/concursos'  },
+  { label: 'Contacto',   href: '/contacto'   },
   { label: 'Mayoristas', href: '/mayoristas' },
 ];
 ---

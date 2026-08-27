@@ -311,6 +311,43 @@ export async function removeFromWishlist(productId: string): Promise<void> {
   await authedFetch(`/wishlist/${productId}`, { method: 'DELETE' });
 }
 
+// ── Concursos ─────────────────────────────────────────────────────────────────
+
+export interface PromoConcurso {
+  id: string;
+  titulo: string;
+  imagenPromoUrl: string;
+  montoMinimo: number;
+  fechaDesde: string;
+  fechaHasta: string | null;
+}
+
+export interface Concurso {
+  id: string;
+  titulo: string;
+  estado: 'DRAFT' | 'ACTIVE' | 'FINISHED';
+  montoMinimo: number;
+  fechaDesde: string;
+  fechaHasta: string | null;
+  imagenPromoUrl: string | null;
+  imagenPromoActiva: boolean;
+  resultadoVisible: boolean;
+  ganadorOrdenId: string | null;
+  ganadorFallbackNombre: string | null;
+  permiteMultiplesParticipaciones: boolean;
+  minimoTickets: number;
+  participantesCount: number;
+  creadoEn: string;
+}
+
+export async function getPromoConcurso(): Promise<PromoConcurso | null> {
+  return get<PromoConcurso>('/concursos/promo');
+}
+
+export async function getConcursos(): Promise<Concurso[]> {
+  return (await get<Concurso[]>('/concursos')) ?? [];
+}
+
 // Login con Google: manda el ID token de GIS al backend, que lo verifica y devuelve la sesión
 export async function loginWithGoogle(idToken: string): Promise<AuthResponse> {
   const res = await fetch(`${BASE}/auth/google`, {
